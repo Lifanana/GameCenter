@@ -36,7 +36,7 @@ class GameCenterApp(ctk.CTk):
     def confirm_exit(self):
         """פונקציה ששואלת את המשתמש אם הוא בטוח וסוגרת את האפליקציה"""
         # מציג תיבת דיאלוג עם אפשרויות "כן" ו"לא"
-        ans = messagebox.askyesno("Exit", "Are you sure you want to exit?\nהאם אתה בטוח שברצונך לצאת?")
+        ans = messagebox.askyesno("Exit", "Are you sure you want to exit?")
         if ans: # אם לחץ כן
             self.destroy()
 

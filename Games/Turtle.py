@@ -1,158 +1,168 @@
+import customtkinter as ctk
 import turtle
 import random
+import sys
 
-# 1. הגדרת מסך המשחק והחלון
-screen = turtle.Screen()
-screen.title("GameCenter - Turtle Control")
-screen.bgcolor("white")
-screen.setup(width=600, height=600)  # קיבוע גודל החלון כדי שהכפתורים יהיו מדויקים
+# הגדרת עיצוב כללי ל-customtkinter
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("blue")
 
-# 2. יצירת הצב (השחקן)
-player = turtle.Turtle()
-player.shape("turtle")
-player.color("blue")
-player.pensize(3)
-player.speed(0)
-player.hideturtle()  # נסתיר אותו במסך הפתיחה
+# משתנה גלובלי שיעזור לנו לנהל את הניווט חזרה לתפריט
+go_to_menu_flag = False
 
-def change_color_random():
-    """שינוי צבע הצב לצבע אקראי"""
-    colors = ["red", "green", "blue", "yellow", "purple", "orange"]
-    player.color(random.choice(colors))
+# --- מחלקת עמוד הפתיחה ב-CustomTkinter ---
+class TurtleMenuApp(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+        
+        self.title("Turtle Control - תפריט פתיחה")
+        self.geometry("450x400")
+        self.resizable(False, False)
+        
+        self.start_game_chosen = False
 
-# יצירת צב עזר מיוחד לציור הכפתורים והטקסטים
-drawer = turtle.Turtle()
-drawer.speed(0)
-drawer.hideturtle()
+        # כותרת המשחק
+        self.title_label = ctk.CTkLabel(
+            self, 
+            text="🐢 Turtle Control 🐢", 
+            font=ctk.CTkFont(family="Arial", size=36, weight="bold"),
+            text_color="#50FA7B"  
+        )
+        self.title_label.pack(pady=(60, 20))
 
-# משתנה גלובלי שעוקב אחרי מצב המשחק ("menu" או "game")
-game_state = "menu"
+        self.subtitle_label = ctk.CTkLabel(
+            self, 
+            text="שלטו בצב, שנו צבעים וציירו על המסך!", 
+            font=ctk.CTkFont(family="Arial", size=16)
+        )
+        self.subtitle_label.pack(pady=(0, 40))
 
-# --- פונקציות תנועה ושליטה בצב ---
-def move_forward():
-    if game_state == "game":
-        player.forward(20)
+        # כפתור התחלת המשחק
+        self.btn_start = ctk.CTkButton(
+            self,
+            text="🎮 התחל משחק / Start Game",
+            font=ctk.CTkFont(family="Arial", size=16, weight="bold"),
+            width=260,
+            height=55,
+            corner_radius=10,
+            command=self.start_game
+        )
+        self.btn_start.pack(pady=12)
 
-def move_backward():
-    if game_state == "game":
-        player.backward(20)
+        # כפתור יציאה
+        self.btn_exit = ctk.CTkButton(
+            self,
+            text="🚪 יציאה / Exit",
+            font=ctk.CTkFont(family="Arial", size=14),
+            fg_color="#A83232",
+            hover_color="#822121",
+            width=150,
+            height=40,
+            corner_radius=10,
+            command=self.exit_app
+        )
+        self.btn_exit.pack(pady=(40, 10))
 
-def turn_left():
-    if game_state == "game":
-        player.left(15)
+    def start_game(self):
+        self.start_game_chosen = True
+        self.destroy()
 
-def turn_right():
-    if game_state == "game":
-        player.right(15)
+    def exit_app(self):
+        self.destroy()
+        sys.exit()
 
-def change_color_red():
-    if game_state == "game": player.color("red")
 
-def change_color_green():
-    if game_state == "game": player.color("green")
+# --- פונקציות המשחק ב-Turtle ---
 
-def change_color_blue():
-    if game_state == "game": player.color("blue")
-
-def clear_screen():
-    if game_state == "game": player.clear()
-
-# --- פונקציות ניהול מסכים וכפתורים ---
-
-def draw_button(x, y, width, height, text, color):
-    """פונקציית עזר לציור כפתור מלבני עם טקסט במרכזו"""
-    drawer.penup()
-    drawer.goto(x - width/2, y - height/2)
-    drawer.pendown()
-    drawer.color(color)
-    drawer.begin_fill()
-    for _ in range(2):
-        drawer.forward(width)
-        drawer.left(90)
-        drawer.forward(height)
-        drawer.left(90)
-    drawer.end_fill()
+def run_turtle_game():
+    """הפעלת חלון המשחק והלוגיקה של Turtle"""
+    global go_to_menu_flag
+    go_to_menu_flag = False  # איפוס הדגל בכל הפעלה מחדש
     
-    # כתיבת הטקסט במרכז הכפתור
-    drawer.penup()
-    drawer.goto(x, y - 10)  # התאמה קלה שיהיה במרכז לגובה
-    drawer.color("white")
-    drawer.write(text, align="center", font=("Arial", 14, "bold"))
+    # אתחול מסך ה-Turtle
+    screen = turtle.Screen()
+    screen.title("GameCenter - Turtle Control")
+    screen.bgcolor("white")
+    screen.setup(width=600, height=600)
 
-def show_menu():
-    """הצגת מסך הפתיחה"""
-    global game_state
-    game_state = "menu"
-    
-    player.hideturtle()  # הסתרת השחקן
-    player.penup()       # מניעת ציור בזמן שהשחקן חוזר למרכז
-    player.goto(0, 0)
-    
-    drawer.clear()       # ניקוי מסך הפתיחה הקודם
-    screen.bgcolor("lightblue")  # רקע לתפריט
-    
-    # כותרת המשחק
-    drawer.penup()
-    drawer.goto(0, 150)
-    drawer.color("navy")
-    drawer.write("ברוכים הבאים למשחק הצב!", align="center", font=("Arial", 24, "bold"))
-    
-    # ציור כפתור "שחק" (במרכז המסך בקואורדינטות 0,0)
-    draw_button(0, 0, 150, 50, "שחק (Play)", "green")
+    # יצירת הצב (השחקן)
+    player = turtle.Turtle()
+    player.shape("turtle")
+    player.color("blue")
+    player.pensize(3)
+    player.speed(0)
 
-def start_game():
-    """מעבר למצב משחק"""
-    global game_state
-    game_state = "game"
-    
-    drawer.clear()  # מחיקת כפתורי התפריט
-    screen.bgcolor("white")  # רקע המשחק
-    
-    # הוראות קטנות בחלק העליון שיראו תמיד
+    # יצירת צב עזר לכתיבת ההוראות למעלה
+    drawer = turtle.Turtle()
+    drawer.speed(0)
+    drawer.hideturtle()
     drawer.penup()
     drawer.goto(0, 260)
     drawer.color("gray")
-    drawer.write("לחץ על M כדי לחזור לתפריט הראשי | C כדי לנקות", align="center", font=("Arial", 10, "normal"))
-    
-    player.pendown()  # החזרת היכולת לצייר
-    player.showturtle()  # הצגת הצב שוב
+    drawer.write("חצים: תנועה | רווח: צבע | C: ניקוי | M: חזרה לתפריט", align="center", font=("Arial", 11, "bold"))
 
-def check_click(x, y):
-    """פונקציה שבודקת איפה המשתמש לחץ עם העכבר"""
-    global game_state
-    if game_state == "menu":
-        # בדיקה האם הלחיצה הייתה בתוך גבולות כפתור "שחק"
-        # הכפתור נמצא ב-X בין 75- ל-75, וב-Y בין 25- ל-25
-        if -75 < x < 75 and -25 < y < 25:
-            start_game()
+    # פונקציות תנועה ושליטה
+    def move_forward():
+        player.forward(20)
 
-def go_back_to_menu():
-    """פונקציה שמופעלת בלחיצה על המקלדת ומחזירה לתפריט"""
-    if game_state == "game":
-        player.clear()  # מוחק את הציורים הקודמים
-        show_menu()
+    def move_backward():
+        player.backward(20)
 
-# --- 5. הגדרת ההקשבה למקלדת ולעכבר ---
-screen.listen()
+    def turn_left():
+        player.left(15)
 
-# זיהוי לחיצת עכבר על המסך
-screen.onclick(check_click)
+    def turn_right():
+        player.right(15)
 
-# קישור מקשי החיצים לתנועה
-screen.onkeypress(move_forward, "Up")
-screen.onkeypress(move_backward, "Down")
-screen.onkeypress(turn_left, "Left")
-screen.onkeypress(turn_right, "Right")
+    def change_color_random():
+        colors = ["red", "green", "blue", "purple", "orange", "magenta", "cyan"]
+        player.color(random.choice(colors))
 
-# קישור מקשים נוספים לשינוי צבע וניקוי
-screen.onkeypress(change_color_random, "space")  # מקש רווח - צבע אקראי 
-screen.onkeypress(clear_screen, "c")       # מקש C - מחיקת הציור
+    def clear_screen():
+        player.clear()
 
-# מקש חזרה לתפריט (M)
-screen.onkeypress(go_back_to_menu, "m")
+    def go_back_to_menu():
+        """סוגר את חלון ה-turtle הנוכחי ומסמן שרוצים לחזור לתפריט"""
+        global go_to_menu_flag
+        go_to_menu_flag = True
+        screen.bye()  # סוגר את חלון הטרטל ומסיים את ה-mainloop בצורה בטוחה
 
-# הפעלה ראשונית של תפריט המשחק
-show_menu()
+    # הגדרת ההקשבה למקלדת
+    screen.listen()
+    screen.onkeypress(move_forward, "Up")
+    screen.onkeypress(move_backward, "Down")
+    screen.onkeypress(turn_left, "Left")
+    screen.onkeypress(turn_right, "Right")
+    screen.onkeypress(change_color_random, "space")  
+    screen.onkeypress(clear_screen, "c")             
+    screen.onkeypress(go_back_to_menu, "m")  # הקשבה למקש M לחזרה לתפריט
 
-# השארת החלון פתוח
-screen.mainloop()
+    # השארת החלון פתוח ומניעת קריסה
+    try:
+        screen.mainloop()
+    except (turtle.Terminator, _tkinter.TclError):
+        pass
+
+
+# --- ניהול הצימוד והריצה הראשי ---
+def main():
+    while True:
+        # 1. הפעלת עמוד הפתיחה ב-CustomTkinter
+        menu = TurtleMenuApp()
+        menu.mainloop()
+
+        # 2. אם המשתמש לחץ על כפתור ההתחלה, נעבור למשחק ה-Turtle
+        if menu.start_game_chosen:
+            run_turtle_game()
+            
+            # 3. ברגע שחלון ה-Turtle נסגר, בודקים אם זה קרה בגלל שלחצו על M
+            if go_to_menu_flag:
+                continue  # חוזר לתחילת הלולאה ומציג שוב את התפריט הראשי
+            else:
+                break  # אם החלון נסגר סתם ב-X, נצא מהלולאה ונסיים
+        else:
+            break
+
+
+if __name__ == "__main__":
+    main()

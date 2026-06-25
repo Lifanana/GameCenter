@@ -186,7 +186,7 @@ class MainMenu(ctk.CTk):
         super().__init__()
         
         self.title("תפריט ראשי - איקס עיגול")
-        self.geometry("400x350")
+        self.geometry("400x400") # הגדלנו מעט את הגובה כדי להכיל את הכפתור החדש בנוחות
         self.resizable(False, False)
         
         # כותרת ראשית
@@ -230,6 +230,20 @@ class MainMenu(ctk.CTk):
             command=self.start_ai
         )
         self.btn_ai.pack(pady=10)
+
+        # כפתור 3: יציאה מהתוכנית
+        self.btn_exit = ctk.CTkButton(
+            self, 
+            text="🚪 יציאה / Exit", 
+            font=ctk.CTkFont(family="Arial", size=14),
+            fg_color="#A83232",
+            hover_color="#822121",
+            width=150,
+            height=40,
+            corner_radius=8,
+            command=self.destroy
+        )
+        self.btn_exit.pack(pady=(25, 10))
         
     def start_pvp(self):
         self.withdraw()  # מחביא את חלון התפריט (במקום למחוק אותו)

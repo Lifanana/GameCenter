@@ -1,66 +1,181 @@
+import customtkinter as ctk
 import pygame
 import random
 import sys
 
-# אתחול pygame
-pygame.init()
+# הגדרת עיצוב כללי ל-customtkinter
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("blue")
 
-# הגדרת קבועים
-WINDOW_WIDTH = 600
-WINDOW_HEIGHT = 400
-GRID_SIZE = 20  # גודל של כל ריבוע במשחק (הנחש והאוכל)
+# --- מחלקת עמוד הפתיחה ב-CustomTkinter ---
+class SnakeMenuApp(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+        
+        self.title("Snake Game - תפריט פתיחה")
+        self.geometry("1000x650")
+        self.resizable(False, False)
+        
+        self.selected_mode = None
 
-# צבעים (RGB)
-COLOR_BACKGROUND = (40, 42, 54)   # דרקולה כהה
-COLOR_SNAKE_HEAD = (80, 250, 123)  # ירוק בהיר
-COLOR_SNAKE_BODY = (64, 210, 100)  # ירוק כהה יותר
-COLOR_FOOD = (255, 85, 85)         # אדום
-COLOR_TEXT = (248, 248, 242)       # לבן-אפרפר
+        # כותרת המשחק
+        self.title_label = ctk.CTkLabel(
+            self, 
+            text="🐍 Snake Game 🐍", 
+            font=ctk.CTkFont(family="Arial", size=32, weight="bold"),
+            text_color="#50FA7B"  
+        )
+        self.title_label.pack(pady=(50, 20))
 
-# הגדרת המסך והשעון
-screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-pygame.display.set_caption("GameCenter - Snake Game")
-clock = pygame.time.Clock()
+        self.subtitle_label = ctk.CTkLabel(
+            self, 
+            text="בחר מצב משחק / Select Game Mode:", 
+            font=ctk.CTkFont(family="Arial", size=16)
+        )
+        self.subtitle_label.pack(pady=(0, 30))
+
+        # כפתור מצב קלאסי
+        self.btn_classic = ctk.CTkButton(
+            self,
+            text="🎮 Classic Mode (רגיל)",
+            font=ctk.CTkFont(family="Arial", size=16, weight="bold"),
+            width=260,
+            height=50,
+            command=lambda: self.set_mode_and_close("classic")
+        )
+        self.btn_classic.pack(pady=12)
+
+        # כפתור מצב קוביות חוסמות
+        self.btn_obstacles = ctk.CTkButton(
+            self,
+            text="🤖 Obstacle Mode (קוביות חוסמות)",
+            font=ctk.CTkFont(family="Arial", size=16, weight="bold"),
+            fg_color="#FFB86C",       
+            hover_color="#E09F53",
+            text_color="#1E1E2E",     
+            width=260,
+            height=50,
+            command=lambda: self.set_mode_and_close("obstacles")
+        )
+        self.btn_obstacles.pack(pady=12)
+
+    def set_mode_and_close(self, mode):
+        self.selected_mode = mode
+        self.destroy()
 
 
-def generate_food(snake):
-    """מייצר מיקום חדש לאוכל שלא נמצא על הנחש"""
+# --- מחלקת מסך הפסד (Game Over) ב-CustomTkinter ---
+class GameOverWindow(ctk.CTk):
+    def __init__(self, score):
+        super().__init__()
+        
+        self.title("Game Over")
+        self.geometry("1000*650")
+        self.resizable(False, False)
+        
+        self.action_chosen = None  # ישמור "restart" או "menu"
+
+        # כותרת הפסד
+        self.title_label = ctk.CTkLabel(
+            self, 
+            text="💥 GAME OVER 💥", 
+            font=ctk.CTkFont(family="Arial", size=32, weight="bold"),
+            text_color="#FF5555"  # צבע אדום שגיאה/הפסד
+        )
+        self.title_label.pack(pady=(40, 10))
+
+        # הצגת הניקוד הסופי
+        self.score_label = ctk.CTkLabel(
+            self, 
+            text=f"הניקוד שלך: {score}\nFinal Score: {score}", 
+            font=ctk.CTkFont(family="Arial", size=20, weight="bold"),
+            text_color="#F8F8F2"
+        )
+        self.score_label.pack(pady=20)
+
+        # כפתור משחק מחדש
+        self.btn_restart = ctk.CTkButton(
+            self,
+            text="🔄 לשחק מחדש / Restart",
+            font=ctk.CTkFont(family="Arial", size=15, weight="bold"),
+            fg_color="#50FA7B",
+            hover_color="#40D268",
+            text_color="#1E1E2E",
+            width=220,
+            height=45,
+            command=lambda: self.select_action("restart")
+        )
+        self.btn_restart.pack(pady=10)
+
+        # כפתור חזרה לתפריט הראשי
+        self.btn_menu = ctk.CTkButton(
+            self,
+            text="🏠 תפריט ראשי / Main Menu",
+            font=ctk.CTkFont(family="Arial", size=15, weight="bold"),
+            fg_color="#444444",
+            hover_color="#333333",
+            width=220,
+            height=45,
+            command=lambda: self.select_action("menu")
+        )
+        self.btn_menu.pack(pady=10)
+
+    def select_action(self, action):
+        """שומרת את הבחירה וסוגרת את חלון ה-Game Over"""
+        self.action_chosen = action
+        self.destroy()
+
+
+# --- הגדרות וקבועים עבור Pygame ---
+WINDOW_WIDTH = 1000
+WINDOW_HEIGHT = 650
+GRID_SIZE = 20  
+
+COLOR_BACKGROUND = (40, 42, 54)   
+COLOR_SNAKE_HEAD = (80, 250, 123)  
+COLOR_SNAKE_BODY = (64, 210, 100)  
+COLOR_FOOD = (255, 85, 85)         
+COLOR_OBSTACLE = (255, 184, 108)   
+COLOR_TEXT = (248, 248, 242)       
+
+
+def generate_food(snake, obstacles):
     while True:
         x = random.randint(0, (WINDOW_WIDTH - GRID_SIZE) // GRID_SIZE) * GRID_SIZE
         y = random.randint(0, (WINDOW_HEIGHT - GRID_SIZE) // GRID_SIZE) * GRID_SIZE
-        if (x, y) not in snake:
+        if (x, y) not in snake and (x, y) not in obstacles:
             return x, y
 
 
-def main():
-    # מיקום התחלתי של הנחש (רשימת קואורדינטות)
-    snake = [
-        (100, 100),  # ראש
-        (80, 100),   # גוף
-        (60, 100)    # זנב
-    ]
+def generate_obstacle(snake, food, obstacles):
+    while True:
+        x = random.randint(0, (WINDOW_WIDTH - GRID_SIZE) // GRID_SIZE) * GRID_SIZE
+        y = random.randint(0, (WINDOW_HEIGHT - GRID_SIZE) // GRID_SIZE) * GRID_SIZE
+        if (x, y) not in snake and (x, y) != food and (x, y) not in obstacles:
+            return x, y
 
-    # כיוון תנועה התחלתי (ימינה)
-    # קואורדינטות התנועה: (x, y)
+
+def run_pygame_game(game_mode):
+    """מריצה את משחק ה-Pygame ומחזירה את הניקוד הסופי שהושג"""
+    pygame.init()
+    screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+    pygame.display.set_caption("GameCenter - Snake Game")
+    clock = pygame.time.Clock()
+
+    snake = [(100, 100), (80, 100), (60, 100)]
+    obstacles = []
     direction = (GRID_SIZE, 0)
-
-    # יצירת האוכל הראשון
-    food = generate_food(snake)
-
+    food = generate_food(snake, obstacles)
     score = 0
     game_over = False
 
-    # לולאת המשחק הראשית
     while not game_over:
-        
-        # 1. טיפול באירועים (קלט מהמשתמש)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             
             elif event.type == pygame.KEYDOWN:
-                # שינוי כיוון, תוך מניעה מהנחש לחזור ישירות אחורה לתוך עצמו
                 if event.key == pygame.K_UP and direction != (0, GRID_SIZE):
                     direction = (0, -GRID_SIZE)
                 elif event.key == pygame.K_DOWN and direction != (0, -GRID_SIZE):
@@ -70,57 +185,87 @@ def main():
                 elif event.key == pygame.K_RIGHT and direction != (-GRID_SIZE, 0):
                     direction = (GRID_SIZE, 0)
 
-        # 2. עדכון מיקום הנחש
-        # חישוב המיקום החדש של הראש
         new_head = (snake[0][0] + direction[0], snake[0][1] + direction[1])
 
-        # בדיקת התנגשות בקירות
         if (new_head[0] < 0 or new_head[0] >= WINDOW_WIDTH or
                 new_head[1] < 0 or new_head[1] >= WINDOW_HEIGHT):
             game_over = True
             continue
 
-        # בדיקת התנגשות בגוף של עצמו
         if new_head in snake:
             game_over = True
             continue
 
-        # הוספת הראש החדש לפנים
+        if game_mode == "obstacles" and new_head in obstacles:
+            game_over = True
+            continue
+
         snake.insert(0, new_head)
 
-        # בדיקה אם הנחש אכל את האוכל
         if new_head == food:
             score += 1
-            food = generate_food(snake)
+            if game_mode == "obstacles":
+                new_obs = generate_obstacle(snake, food, obstacles)
+                obstacles.append(new_obs)
+            food = generate_food(snake, obstacles)
         else:
-            # אם הוא לא אכל, מוחקים את האיבר האחרון כדי לשמור על האורך
             snake.pop()
 
-        # 3. ציור על המסך
         screen.fill(COLOR_BACKGROUND)
 
-        # ציור האוכל
+        for obs in obstacles:
+            pygame.draw.rect(screen, COLOR_OBSTACLE, pygame.Rect(obs[0], obs[1], GRID_SIZE - 2, GRID_SIZE - 2))
+
         pygame.draw.rect(screen, COLOR_FOOD, pygame.Rect(food[0], food[1], GRID_SIZE, GRID_SIZE))
 
-        # ציור הנחש
         for i, segment in enumerate(snake):
             color = COLOR_SNAKE_HEAD if i == 0 else COLOR_SNAKE_BODY
             pygame.draw.rect(screen, color, pygame.Rect(segment[0], segment[1], GRID_SIZE - 2, GRID_SIZE - 2))
 
-        # הצגת הניקוד
         font = pygame.font.SysFont("arial", 24)
-        score_text = font.render(f"Score: {score}", True, COLOR_TEXT)
+        mode_str = "Classic" if game_mode == "classic" else "Obstacles"
+        score_text = font.render(f"Score: {score}  |  Mode: {mode_str}", True, COLOR_TEXT)
         screen.blit(score_text, (10, 10))
 
-        # עדכון המסך
         pygame.display.flip()
-
-        # הגדרת מהירות המשחק (Frames Per Second) - ככל שהמספר גבוה, הנחש מהיר יותר
         clock.tick(10)
 
-    # מסך Game Over קצר
-    print(f"Game Over! Your final score is: {score}")
     pygame.quit()
+    return score  # מחזיר את הניקוד הסופי לחלון ה-GameOver
+
+
+# --- לולאת ניהול המשחק הראשית והניווט ---
+def main():
+    current_mode = None
+
+    while True:
+        # אם אין מצב נוכחי מוגדר (או שחזרנו לתפריט), נפתח את תפריט הבחירה
+        if current_mode is None:
+            menu = SnakeMenuApp()
+            menu.mainloop()
+            
+            # אם המשתמש סגר את התפריט ב-X בלי לבחור, נצא מהתוכנית
+            if menu.selected_mode is None:
+                break
+            current_mode = menu.selected_mode
+
+        # הפעלת המשחק ב-Pygame וקבלת הניקוד הסופי
+        final_score = run_pygame_game(current_mode)
+
+        # פתיחת חלון ה-Game Over ב-CustomTkinter
+        game_over_win = GameOverWindow(final_score)
+        game_over_win.mainloop()
+
+        # בדיקת ההחלטה של המשתמש
+        if game_over_win.action_chosen == "restart":
+            # המשך הלולאה עם אותו current_mode (מתחיל מחדש)
+            continue
+        elif game_over_win.action_chosen == "menu":
+            # איפוס המצב כדי שהלולאה תפתח שוב את תפריט הבחירה בתור הבא
+            current_mode = None
+        else:
+            # אם הוא סגר את ה-X של חלון ה-Game Over, נצא לגמרי
+            break
 
 
 if __name__ == "__main__":
