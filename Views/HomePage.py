@@ -1,9 +1,10 @@
 import customtkinter as ctk
 from PIL import Image
 import os
+from Games import GamesPage
 from tkinter import messagebox  # ייבוא תיבת ההודעות של tkinter לטובת שאלת האישור
 # ייבוא עמוד ההגדרות מהקובץ השני
-from Settings import SettingsPage 
+from Settings import SettingsPage
 
 # הגדרת עיצוב כללי
 ctk.set_appearance_mode("dark")
@@ -19,25 +20,36 @@ class GameCenterApp(ctk.CTk):
         # בניית העמודים (פריימים) בתוך אותו החלון
         self.main_menu_frame = MainMenuFrame(master=self, app_manager=self)
         self.settings_frame = SettingsPage(master=self, app_manager=self)
-        
+        self.games_frame = GamesPage(master=self, app_manager=self)
+
         # הצגת עמוד הבית בהתחלה
         self.show_main_menu()
 
+    def hide_all_frames(self):
+        """פונקציית עזר פרטית שמסתירה את כל הפריימים לפני שמציגים פריים חדש"""
+        self.main_menu_frame.pack_forget()
+        self.settings_frame.pack_forget()
+        self.games_frame.pack_forget()
+
     def show_main_menu(self):
         """מעבר לעמוד הראשי"""
-        self.settings_frame.pack_forget()  # מסתיר את ההגדרות
-        self.main_menu_frame.pack(fill="both", expand=True)  # מציג את עמוד הבית
+        self.hide_all_frames()
+        self.main_menu_frame.pack(fill="both", expand=True)  # מציג את עמוד הבית 
 
     def show_settings(self):
         """מעבר לעמוד ההגדרות"""
-        self.main_menu_frame.pack_forget()  # מסתיר את עמוד הבית
+        self.hide_all_frames()
         self.settings_frame.pack(fill="both", expand=True)  # מציג את ההגדרות
+
+    def show_games(self):
+        """מעבר לעמוד המשחקים (פותר את ה-AttributeError)"""
+        self.hide_all_frames()
+        self.games_frame.pack(fill="both", expand=True)  # מציג את עמוד המשחקים
 
     def confirm_exit(self):
         """פונקציה ששואלת את המשתמש אם הוא בטוח וסוגרת את האפליקציה"""
-        # מציג תיבת דיאלוג עם אפשרויות "כן" ו"לא"
         ans = messagebox.askyesno("Exit", "Are you sure you want to exit?")
-        if ans: # אם לחץ כן
+        if ans: 
             self.destroy()
 
 
@@ -92,7 +104,7 @@ class MainMenuFrame(ctk.CTkFrame):
                 )
                 fallback_label.grid(row=row, column=col, padx=15, pady=15)
         
-        # 3. יצירת מסגרת תחתונה לכפתורים (כדי שיהיו אחד ליד השני)
+        # 3. יצירת מסגרת תחתונה לכפתורים
         self.buttons_frame = ctk.CTkFrame(self, fg_color="transparent")
         self.buttons_frame.pack(pady=(30, 20))
 
@@ -108,17 +120,17 @@ class MainMenuFrame(ctk.CTkFrame):
         )
         self.btn_settings.pack(side="left", padx=10)
 
-        # כפתור Exit חדש ליד כפתור ההגדרות
+        # כפתור Exit
         self.btn_exit = ctk.CTkButton(
             self.buttons_frame, 
             text="🚪 Exit", 
             font=ctk.CTkFont(family="Arial", size=18, weight="bold"),
-            fg_color="#A83232",       # צבע אדום לכפתור יציאה
-            hover_color="#822121",   # צבע אדום כהה בזמן מעבר עכבר
+            fg_color="#A83232",       
+            hover_color="#822121",   
             width=160,
             height=45,
             corner_radius=8,
-            command=self.app_manager.confirm_exit  # קורא לפונקציית האישור
+            command=self.app_manager.confirm_exit  
         )
         self.btn_exit.pack(side="left", padx=10)
 
