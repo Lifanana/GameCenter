@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from PIL import Image
 import os
+from tkinter import messagebox  # ייבוא תיבת ההודעות של tkinter לטובת שאלת האישור
 # ייבוא עמוד ההגדרות מהקובץ השני
 from Settings import SettingsPage 
 
@@ -32,6 +33,13 @@ class GameCenterApp(ctk.CTk):
         self.main_menu_frame.pack_forget()  # מסתיר את עמוד הבית
         self.settings_frame.pack(fill="both", expand=True)  # מציג את ההגדרות
 
+    def confirm_exit(self):
+        """פונקציה ששואלת את המשתמש אם הוא בטוח וסוגרת את האפליקציה"""
+        # מציג תיבת דיאלוג עם אפשרויות "כן" ו"לא"
+        ans = messagebox.askyesno("Exit", "Are you sure you want to exit?\nהאם אתה בטוח שברצונך לצאת?")
+        if ans: # אם לחץ כן
+            self.destroy()
+
 
 class MainMenuFrame(ctk.CTkFrame):
     """פריים עמוד הבית"""
@@ -53,9 +61,7 @@ class MainMenuFrame(ctk.CTkFrame):
         
         # --- חישוב הנתיב לתיקיית Assets ---
         current_dir = os.path.dirname(os.path.abspath(__file__))
-
-        project_root = os.path.dirname(current_dir)
-        # אם תיקיית Assets נמצאת באותו מיקום של הקוד, נשתמש ב-current_dir הישיר
+        project_root = os.path.dirname(current_dir)  
         assets_dir = os.path.join(project_root, "Assets")
         
         # רשימת שמות קבצי החתולים
@@ -86,17 +92,35 @@ class MainMenuFrame(ctk.CTkFrame):
                 )
                 fallback_label.grid(row=row, column=col, padx=15, pady=15)
         
-        # 3. כפתור Setting מתחת לתמונות
+        # 3. יצירת מסגרת תחתונה לכפתורים (כדי שיהיו אחד ליד השני)
+        self.buttons_frame = ctk.CTkFrame(self, fg_color="transparent")
+        self.buttons_frame.pack(pady=(30, 20))
+
+        # כפתור Settings
         self.btn_settings = ctk.CTkButton(
-            self, 
+            self.buttons_frame, 
             text="⚙️ Settings", 
             font=ctk.CTkFont(family="Arial", size=18, weight="bold"),
-            width=200,
+            width=160,
             height=45,
             corner_radius=8,
-            command=self.app_manager.show_settings  # קורא לפונקציה שמציגה הגדרות
+            command=self.app_manager.show_settings
         )
-        self.btn_settings.pack(pady=(30, 20))
+        self.btn_settings.pack(side="left", padx=10)
+
+        # כפתור Exit חדש ליד כפתור ההגדרות
+        self.btn_exit = ctk.CTkButton(
+            self.buttons_frame, 
+            text="🚪 Exit", 
+            font=ctk.CTkFont(family="Arial", size=18, weight="bold"),
+            fg_color="#A83232",       # צבע אדום לכפתור יציאה
+            hover_color="#822121",   # צבע אדום כהה בזמן מעבר עכבר
+            width=160,
+            height=45,
+            corner_radius=8,
+            command=self.app_manager.confirm_exit  # קורא לפונקציית האישור
+        )
+        self.btn_exit.pack(side="left", padx=10)
 
 
 if __name__ == "__main__":

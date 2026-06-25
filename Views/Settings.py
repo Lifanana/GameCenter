@@ -6,36 +6,46 @@ class SettingsPage(ctk.CTkFrame):
         super().__init__(master)
         self.app_manager = app_manager
 
-        # כותרת (בתוך הפריים הנוכחי)
+        # 1. כותרת (בראש העמוד)
         self.title_label = ctk.CTkLabel(
             self,
             text="Game Center - Settings",
             font=("Arial", 30, "bold")
         )
-        self.title_label.pack(pady=20)
+        self.title_label.pack(pady=(20, 10))
 
-        # תפריט כפתורים צדי
-        self.menu_frame = ctk.CTkFrame(self, width=200)
-        self.menu_frame.pack(side="left", fill="y", padx=10, pady=10)
+        # 2. מסגרת לכפתורים - ממוקמת מתחת לכותרת (בלי side="left" לפריים עצמו)
+        self.menu_frame = ctk.CTkFrame(self, fg_color="transparent")
+        self.menu_frame.pack(pady=10)
 
-        # כפתור חזרה הביתה (משתמש ב-app_manager שקיבלנו)
+        # 3. הכפתורים - כולם עם side="left" כדי שיוצגו אחד ליד השני בתוך המסגרת
         self.home_btn = ctk.CTkButton(
             self.menu_frame,
             text="Home",
+            font=("Arial", 16, "bold"),
+            width=140,
+            height=40,
             command=self.app_manager.show_main_menu
         )
-        self.home_btn.pack(pady=10, padx=10)
+        self.home_btn.pack(side="left", padx=10)
 
         self.games_btn = ctk.CTkButton(
             self.menu_frame,
-            text="Games"
+            text="Games",
+            font=("Arial", 16, "bold"),
+            width=140,
+            height=40
         )
-        self.games_btn.pack(pady=10, padx=10)
+        self.games_btn.pack(side="left", padx=10)
 
-        # כפתור יציאה שסוגר את כל האפליקציה
         self.exit_btn = ctk.CTkButton(
             self.menu_frame,
             text="Exit",
-            command=self.app_manager.destroy
+            font=("Arial", 16, "bold"),
+            fg_color="#A83232",       # צבע אדום תואם ליציאה
+            hover_color="#822121",
+            width=140,
+            height=40,
+            command=self.app_manager.confirm_exit  # משתמש בפונקציית האישור עם השאלה שיצרנו ב-HomePage
         )
-        self.exit_btn.pack(pady=10, padx=10)
+        self.exit_btn.pack(side="left", padx=10)
