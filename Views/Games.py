@@ -1,3 +1,6 @@
+import subprocess
+import sys
+import os
 import customtkinter as ctk
 
 class GamesPage(ctk.CTkFrame):
@@ -79,15 +82,17 @@ class GamesPage(ctk.CTkFrame):
         )
         self.select_label.pack(pady=(0, 15))
 
+        # Added "filename" to map each option to its actual script file
         games_list = [
-            {"name": "🐍 Snake Game", "command": lambda: self.launch_game("snake")},
-            {"name": "🔢 2048", "command": lambda: self.launch_game("2048")},
-            {"name": "❌ Tic Tac Toe", "command": lambda: self.launch_game("tictactoe")},
-            {"name": "🤔 Guess The Number", "command": lambda: self.launch_game("guess")},
-            {"name": "🐢 Turtle Control", "command": lambda: self.launch_game("turtle")}
+            {"name": "🐍 Snake Game", "script": "Snake.py"},
+            {"name": "🔢 2048", "script": "2048.py"},
+            {"name": "❌ Tic Tac Toe", "script": "XO.py"},
+            {"name": "🤔 Guess The Number", "script": "GuessNumber.py"},
+            {"name": "🐢 Turtle Control", "script": "Turtle.py"}
         ]
 
         for game in games_list:
+            # FIX: game=game passes the current loop state safely to the lambda function
             btn = ctk.CTkButton(
                 self.games_container,
                 text=game["name"],
@@ -98,12 +103,32 @@ class GamesPage(ctk.CTkFrame):
                 hover_color="#3D3D3D",
                 border_width=1,
                 border_color="#555555",
-                command=game["command"]
+                command=lambda g=game: self.launch_game(g["script"])
             )
             btn.pack(pady=8)  
 
-    def launch_game(self, game_key):
-        """מפעילה את פונקציות הרצת המשחקים דרך ה-manager"""
-        print(f"Launching {game_key}...")
-        if hasattr(self.app_manager, f"start_{game_key}"):
-            getattr(self.app_manager, f"start_{game_key}")()
+    def launch_game(self, script_name):
+        """מפעילה את המשחק, מחביאה את התפריט הראשי ומחזירה אותו כשהמשחק נסגר"""
+        full_path = os.path.join("Games", script_name)
+        
+        if os.path.exists(full_path):
+            try:
+                # 1. מוצאים את החלון הראשי ביותר (ה-root של האפליקציה)
+                root = self.winfo_toplevel()
+                
+                # 2. מחביאים את החלון הראשי
+                root.withdraw()
+                
+                # 3. מריצים את המשחק ומחכים שהוא יסתיים (run במקום Popen)
+                # שימו לב: זה יקפיא את תהליך הרקע של התפריט, וזה מצוין כי הוא מוחבא ממילא
+                subprocess.run([sys.executable, full_path])
+                
+                # 4. ברגע שהמשחק נסגר (והשורה למעלה מסיימת), מחזירים את החלון הראשי
+                root.deiconify()
+                
+            except Exception as e:
+                print(f"Error launching {script_name}: {e}")
+                # במקרה של שגיאה, נדאג שהחלון יחזור ולא ייעלם לתמיד
+                self.winfo_toplevel().deiconify()
+        else:
+            print(f"Error: Could not find '{full_path}'.")

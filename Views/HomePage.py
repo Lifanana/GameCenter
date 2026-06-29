@@ -116,7 +116,7 @@ class MainMenuFrame(ctk.CTkFrame):
             width=160,
             height=45,
             corner_radius=8,
-            command=self.app_manager.show_settings
+            command=self.app_manager.show_games
         )
         self.btn_settings.pack(side="left", padx=10)
 

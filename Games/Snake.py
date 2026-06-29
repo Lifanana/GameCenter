@@ -17,6 +17,7 @@ class SnakeMenuApp(ctk.CTk):
         self.resizable(False, False)
         
         self.selected_mode = None
+        self.back_to_games = False  # משתנה חדש שבודק אם ביקשנו לחזור אחורה
 
         # כותרת המשחק
         self.title_label = ctk.CTkLabel(
@@ -59,8 +60,26 @@ class SnakeMenuApp(ctk.CTk):
         )
         self.btn_obstacles.pack(pady=12)
 
+        # --- כפתור חזרה ל-Games Center ---
+        self.btn_back = ctk.CTkButton(
+            self,
+            text="⬅️ חזרה ל-Games Center",
+            font=ctk.CTkFont(family="Arial", size=15, weight="bold"),
+            fg_color="#A83232",
+            hover_color="#822121",
+            width=260,
+            height=50,
+            command=self.return_to_main_menu
+        )
+        self.btn_back.pack(pady=30)  # מרווח קצת יותר גדול למטה לעיצוב נקי
+
     def set_mode_and_close(self, mode):
         self.selected_mode = mode
+        self.destroy()
+
+    def return_to_main_menu(self):
+        """מסמן שרוצים לחזור לתפריט הראשי וסוגר את החלון"""
+        self.back_to_games = True
         self.destroy()
 
 
@@ -70,7 +89,8 @@ class GameOverWindow(ctk.CTk):
         super().__init__()
         
         self.title("Game Over")
-        self.geometry("1000*650")
+        # תיקון קל בקוד המקורי שלך: החלפנו את ה-* ב-x במידות הגאומטריה למניעת קריסה
+        self.geometry("1000x650")
         self.resizable(False, False)
         
         self.action_chosen = None  # ישמור "restart" או "menu"
@@ -80,7 +100,7 @@ class GameOverWindow(ctk.CTk):
             self, 
             text="💥 GAME OVER 💥", 
             font=ctk.CTkFont(family="Arial", size=32, weight="bold"),
-            text_color="#FF5555"  # צבע אדום שגיאה/הפסד
+            text_color="#FF5555"  
         )
         self.title_label.pack(pady=(40, 10))
 
@@ -107,10 +127,10 @@ class GameOverWindow(ctk.CTk):
         )
         self.btn_restart.pack(pady=10)
 
-        # כפתור חזרה לתפריט הראשי
+        # כפתור חזרה לתפריט הראשי של הנחש
         self.btn_menu = ctk.CTkButton(
             self,
-            text="🏠 תפריט ראשי / Main Menu",
+            text="🏠 תפריט המשחק / Game Menu",
             font=ctk.CTkFont(family="Arial", size=15, weight="bold"),
             fg_color="#444444",
             hover_color="#333333",
@@ -231,7 +251,7 @@ def run_pygame_game(game_mode):
         clock.tick(10)
 
     pygame.quit()
-    return score  # מחזיר את הניקוד הסופי לחלון ה-GameOver
+    return score  
 
 
 # --- לולאת ניהול המשחק הראשית והניווט ---
@@ -239,12 +259,15 @@ def main():
     current_mode = None
 
     while True:
-        # אם אין מצב נוכחי מוגדר (או שחזרנו לתפריט), נפתח את תפריט הבחירה
         if current_mode is None:
             menu = SnakeMenuApp()
             menu.mainloop()
             
-            # אם המשתמש סגר את התפריט ב-X בלי לבחור, נצא מהתוכנית
+            # אם לחצו על כפתור החזרה ל-Games, נשבור את הלולאה ונצא מהקובץ
+            if menu.back_to_games:
+                break
+                
+            # אם המשתמש סגר את התפריט ב-X בלי לבחור ובלי ללחוץ על חזרה
             if menu.selected_mode is None:
                 break
             current_mode = menu.selected_mode
@@ -258,13 +281,10 @@ def main():
 
         # בדיקת ההחלטה של המשתמש
         if game_over_win.action_chosen == "restart":
-            # המשך הלולאה עם אותו current_mode (מתחיל מחדש)
             continue
         elif game_over_win.action_chosen == "menu":
-            # איפוס המצב כדי שהלולאה תפתח שוב את תפריט הבחירה בתור הבא
             current_mode = None
         else:
-            # אם הוא סגר את ה-X של חלון ה-Game Over, נצא לגמרי
             break
 
 

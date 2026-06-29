@@ -52,14 +52,14 @@ class TurtleMenuApp(ctk.CTk):
         # כפתור יציאה
         self.btn_exit = ctk.CTkButton(
             self,
-            text="🚪 יציאה / Exit",
+            text="⬅️ Back to Games Center",
             font=ctk.CTkFont(family="Arial", size=14),
             fg_color="#A83232",
             hover_color="#822121",
             width=150,
             height=40,
             corner_radius=10,
-            command=self.exit_app
+             command=self.return_to_main_menu
         )
         self.btn_exit.pack(pady=(40, 10))
 
@@ -67,9 +67,10 @@ class TurtleMenuApp(ctk.CTk):
         self.start_game_chosen = True
         self.destroy()
 
-    def exit_app(self):
+    def return_to_main_menu(self):
+        """מסמן שרוצים לחזור לתפריט הראשי וסוגר את החלון"""
+        self.back_to_games = True
         self.destroy()
-        sys.exit()
 
 
 # --- פונקציות המשחק ב-Turtle ---
