@@ -63,7 +63,7 @@ class SnakeMenuApp(ctk.CTk):
         # --- כפתור חזרה ל-Games Center ---
         self.btn_back = ctk.CTkButton(
             self,
-            text="⬅️ חזרה ל-Games Center",
+            text="⬅️ Back to Games Center",
             font=ctk.CTkFont(family="Arial", size=15, weight="bold"),
             fg_color="#A83232",
             hover_color="#822121",

@@ -49,7 +49,7 @@ class MenuApp(ctk.CTk):
         # כפתור יציאה
         self.btn_exit = ctk.CTkButton(
             self,
-            text="🚪 יציאה / Exit",
+           text="⬅️ Back to Games Center",
             font=ctk.CTkFont(family="Arial", size=14),
             fg_color="#A83232",
             hover_color="#822121",
