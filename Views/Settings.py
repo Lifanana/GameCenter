@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from Games import GamesPage
 
 class SettingsPage(ctk.CTkFrame):
     """פריים עמוד ההגדרות"""
@@ -34,7 +35,8 @@ class SettingsPage(ctk.CTkFrame):
             text="Games",
             font=("Arial", 16, "bold"),
             width=140,
-            height=40
+            height=40,
+            command=self.app_manager.show_games
         )
         self.games_btn.pack(side="left", padx=10)
 
