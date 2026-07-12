@@ -39,15 +39,3 @@ class SettingsPage(ctk.CTkFrame):
             command=self.app_manager.show_games
         )
         self.games_btn.pack(side="left", padx=10)
-
-        self.exit_btn = ctk.CTkButton(
-            self.menu_frame,
-            text="Exit",
-            font=("Arial", 16, "bold"),
-            fg_color="#A83232",       # צבע אדום תואם ליציאה
-            hover_color="#822121",
-            width=140,
-            height=40,
-            command=self.app_manager.confirm_exit  # משתמש בפונקציית האישור עם השאלה שיצרנו ב-HomePage
-        )
-        self.exit_btn.pack(side="left", padx=10)
