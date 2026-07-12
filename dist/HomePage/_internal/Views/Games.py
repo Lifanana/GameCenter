@@ -85,37 +85,41 @@ class GamesPage(ctk.CTkFrame):
     def launch_game(self, script_name):
         """מפעילה את המשחק, מחביאה את התפריט הראשי ומחזירה אותו כשהמשחק נסגר"""
         
-        # --- חישוב דינמי של הנתיב מתוך תיקיית Views ---
-        # 1. מוצא את הנתיב הנוכחי של תיקיית Views
+        # 1. חישוב דינמי של תיקיית השורש (עובד גם בריצה רגילה וגם בתוך ה-exe)
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        # 2. הולך צעד אחד אחורה לתיקיית האב (תיקיית הפרויקט הראשי)
         project_root = os.path.dirname(current_dir)
-        # 3. נכנס לתוך תיקיית Games ומחפש את קובץ המשחק
+        
+        # נתיב מלא לקובץ המשחק או ה-exe
         full_path = os.path.join(project_root, "Games", script_name)
         
         if os.path.exists(full_path):
             try:
-                # מוצאים את החלון הראשי ביותר (ה-root של האפליקציה)
                 root = self.winfo_toplevel()
+                root.withdraw()  # מחביאים את התפריט הראשי
                 
-                # מחביאים את החלון הראשי
-                root.withdraw()
+                game_dir = os.path.dirname(full_path)
                 
-                # בדיקה האם מדובר בקובץ הרצה חיצוני (exe) או קובץ פייתון
+                # 2. בדיקה האם מדובר בקובץ הרצה חיצוני (exe) כמו Icy Tower
                 if full_path.endswith(".exe"):
-                    # עבור Icy Tower - מריצים ישירות ומגדירים את תיקיית העבודה שלו (cwd)
-                    game_dir = os.path.dirname(full_path)
                     subprocess.run([full_path], cwd=game_dir)
                 else:
-                    # עבור שאר משחקי הפייתון הרגילים שלך
-                    subprocess.run([sys.executable, full_path])
+                    # בדיקה האם האפליקציה רצה כקובץ קומפילציה (EXE של PyInstaller)
+                    if hasattr(sys, '_MEIPASS'):
+                        # בתוך ה-EXE, אין לנו מפרש פייתון חיצוני, לכן נריץ את קובץ ה-py 
+                        # באמצעות פקודת המערכת הכללית של ווינדוס (cmd /c) שמפעילה קבצי פייתון
+                        subprocess.run(["cmd", "/c", sys.executable, full_path], cwd=game_dir)
+                    else:
+                        # ריצה רגילה בזמן פיתוח ב-VS Code
+                        subprocess.run([sys.executable, full_path], cwd=game_dir)
                 
                 # ברגע שהמשחק נסגר, מחזירים את החלון הראשי
                 root.deiconify()
                 
             except Exception as e:
                 print(f"Error launching {script_name}: {e}")
-                # במקרה של שגיאה, נדאג שהחלון יחזור ולא ייעלם לתמיד
                 self.winfo_toplevel().deiconify()
         else:
-            print(f"Error: Could not find '{full_path}'.")
+            # במקום רק להדפיס, נקפיץ הודעה למסך כדי שתראה בדיוק איזה נתיב התוכנה חיפשה ולא מצאה
+            from tkinter import messagebox
+            messagebox.showerror("Error", f"הקובץ לא נמצא בנתיב המבוקש:\n{full_path}")
+            self.winfo_toplevel().deiconify()

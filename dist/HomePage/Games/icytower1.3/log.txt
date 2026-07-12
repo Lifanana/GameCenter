@@ -49,3 +49,5 @@ Free buffer memory
 Free highscore tables
 Free player
 Exiting Allegro
+
+Done...
