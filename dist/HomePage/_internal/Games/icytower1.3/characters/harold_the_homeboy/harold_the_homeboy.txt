@@ -1,0 +1,13 @@
+# data
+[datafile] harold.dat
+
+# info
+Harold the Homeboy is copyright Free Lunch Design.
+Sounds and images contained in the datafile may not
+be reproduced without permission from Free Lunch Design.
+http://www.freelunchdesign.com
+
+	
+
+
+

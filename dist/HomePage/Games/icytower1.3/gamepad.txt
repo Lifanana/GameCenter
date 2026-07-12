@@ -1,0 +1,49 @@
+#
+# GAMEPAD CONFIGURATION FILE
+#
+# In this file you can set up what actions you want the game
+# to perform whenever a control on the gamepad is pressed.
+# Simply exchange the words after the = to what you want to
+# happen.
+#
+# Possible actions are: left, right, up, down, jump and none
+#
+# WARNING: Handle with care! 
+#
+
+left  = left
+right = right
+up    = up
+down  = down
+b1  = jump
+b2  = jump
+b3  = jump
+b4  = jump
+b5  = jump
+b6  = jump
+b7  = jump
+b8  = jump
+b9  = jump
+b10 = jump
+b11 = jump
+b12 = jump
+b13 = jump
+b14 = jump
+b15 = jump
+b16 = jump
+b17 = jump
+b18 = jump
+b19 = jump
+b20 = jump
+b21 = jump
+b22 = jump
+b23 = jump
+b24 = jump
+b25 = jump
+b26 = jump
+b27 = jump
+b28 = jump
+b29 = jump
+b30 = jump
+b31 = jump
+b32 = jump

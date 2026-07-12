@@ -2,11 +2,11 @@
 
 
 a = Analysis(
-    ['views\\HomePage.py'],
+    ['Views\\HomePage.py'],
     pathex=[],
     binaries=[],
-    datas=[],
-    hiddenimports=['pygame'],
+    datas=[('Views', 'Views'), ('Games', 'Games')],
+    hiddenimports=[],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

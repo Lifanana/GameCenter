@@ -1,0 +1,25 @@
+Template character for Icy Tower.
+Have fun!
+
+# graphics
+[frames] 		template.bmp
+	
+# sound
+[jumplo] 		jump_lo.wav  
+[jumpmed] 		jump_mid.wav
+[jumphi]	 	jump_hi.wav   
+[pause] 	 	pause.wav
+[death]			falling.wav   
+[greeting]		hello.wav   
+[edge]			edge.wav
+[bgmusic]		bg_beat.wav
+
+# info
+For more Icy Tower action, visit http://www.freelunchdesign.com .
+
+
+
+	
+
+
+

@@ -1,0 +1,51 @@
+Icy Tower v1.3.1 - log file
+----------------------------
+Game started with the following commands:
+   C:\Users\novos\Documents\GameCenter\dist\HomePage\Games\icytower1.3\icytower13.exe
+Working directory is:
+   C:\Users\novos\Documents\GameCenter\dist\HomePage\Games\icytower1.3\
+
+INIT GAME
+Creating hiscore tables
+Initiating controls
+Loading config file
+Setting windowed mode 640x480
+Installing timers
+Installing keyboard
+Installing sound
+Installing joystick/gamepad
+ gamepad has 0 buttons
+ getting values from gamepad.txt
+Reserving memory
+Loading data
+Initiating player
+Creating color maps
+Checking available characters
+ disco_dave: ok
+ harold_the_homeboy: ok
+ template: ok
+ getting palette from <(1) harold_the_homeboy>
+Loading SFX
+ loading ogg datafile
+ sfx13.dat loaded
+Getting sounds from data file
+Releasing ogg datafile.
+Cleaning up
+Initiating scroller
+Initiating menu controls
+Resetting menu
+
+MAIN MENU LOOP
+
+Showing credits
+
+UNINIT
+Saving config
+  saving config and scores
+Freeing sound memory
+Freeing custom character memory
+Unloading datafile
+Free buffer memory
+Free highscore tables
+Free player
+Exiting Allegro
