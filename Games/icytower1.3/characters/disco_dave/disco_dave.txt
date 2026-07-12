@@ -1,0 +1,13 @@
+# data
+[datafile]	dave.dat
+
+# info
+Disco Dave is copyright Free Lunch Design.
+Sounds and images may not be reproduced 
+without permission from Free Lunch Design.
+http://www.freelunchdesign.com
+
+	
+
+
+

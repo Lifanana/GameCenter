@@ -46,32 +46,7 @@ class GamesPage(ctk.CTkFrame):
         )
         self.games_btn.pack(side="left", padx=10)
 
-        # כפתור הגדרות
-        self.settings_btn = ctk.CTkButton(
-            self.menu_frame,
-            text="Settings",
-            font=("Arial", 16, "bold"),
-            width=140,
-            height=40,
-            command=self.app_manager.show_settings  
-        )
-        self.settings_btn.pack(side="left", padx=10)
-
-        # כפתור יציאה
-        self.exit_btn = ctk.CTkButton(
-            self.menu_frame,
-            text="Exit",
-            font=("Arial", 16, "bold"),
-            fg_color="#A83232",
-            hover_color="#822121",
-            width=140,
-            height=40,
-            command=self.app_manager.confirm_exit
-        )
-        self.exit_btn.pack(side="left", padx=10)
-
         # --- 3. אזור רשימת המשחקים (מתחת לתפריט) ---
-        
         self.games_container = ctk.CTkFrame(self, fg_color="transparent")
         self.games_container.pack(pady=30, padx=20, fill="both", expand=True)
 
@@ -82,17 +57,17 @@ class GamesPage(ctk.CTkFrame):
         )
         self.select_label.pack(pady=(0, 15))
 
-        # Added "filename" to map each option to its actual script file
+        # נתיבי המשחקים יחסית לתיקיית Games הראשי
         games_list = [
             {"name": "🐍 Snake Game", "script": "Snake.py"},
             {"name": "🔢 2048", "script": "2048.py"},
             {"name": "❌ Tic Tac Toe", "script": "XO.py"},
             {"name": "🤔 Guess The Number", "script": "GuessNumber.py"},
-            {"name": "🐢 Turtle Control", "script": "Turtle.py"}
+            {"name": "🐢 Turtle Control", "script": "Turtle.py"},
+           {"name": "🏔 Icy Tower", "script": os.path.join("icytower1.3", "icytower13.exe")}
         ]
 
         for game in games_list:
-            # FIX: game=game passes the current loop state safely to the lambda function
             btn = ctk.CTkButton(
                 self.games_container,
                 text=game["name"],
@@ -109,21 +84,33 @@ class GamesPage(ctk.CTkFrame):
 
     def launch_game(self, script_name):
         """מפעילה את המשחק, מחביאה את התפריט הראשי ומחזירה אותו כשהמשחק נסגר"""
-        full_path = os.path.join("Games", script_name)
+        
+        # --- חישוב דינמי של הנתיב מתוך תיקיית Views ---
+        # 1. מוצא את הנתיב הנוכחי של תיקיית Views
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        # 2. הולך צעד אחד אחורה לתיקיית האב (תיקיית הפרויקט הראשי)
+        project_root = os.path.dirname(current_dir)
+        # 3. נכנס לתוך תיקיית Games ומחפש את קובץ המשחק
+        full_path = os.path.join(project_root, "Games", script_name)
         
         if os.path.exists(full_path):
             try:
-                # 1. מוצאים את החלון הראשי ביותר (ה-root של האפליקציה)
+                # מוצאים את החלון הראשי ביותר (ה-root של האפליקציה)
                 root = self.winfo_toplevel()
                 
-                # 2. מחביאים את החלון הראשי
+                # מחביאים את החלון הראשי
                 root.withdraw()
                 
-                # 3. מריצים את המשחק ומחכים שהוא יסתיים (run במקום Popen)
-                # שימו לב: זה יקפיא את תהליך הרקע של התפריט, וזה מצוין כי הוא מוחבא ממילא
-                subprocess.run([sys.executable, full_path])
+                # בדיקה האם מדובר בקובץ הרצה חיצוני (exe) או קובץ פייתון
+                if full_path.endswith(".exe"):
+                    # עבור Icy Tower - מריצים ישירות ומגדירים את תיקיית העבודה שלו (cwd)
+                    game_dir = os.path.dirname(full_path)
+                    subprocess.run([full_path], cwd=game_dir)
+                else:
+                    # עבור שאר משחקי הפייתון הרגילים שלך
+                    subprocess.run([sys.executable, full_path])
                 
-                # 4. ברגע שהמשחק נסגר (והשורה למעלה מסיימת), מחזירים את החלון הראשי
+                # ברגע שהמשחק נסגר, מחזירים את החלון הראשי
                 root.deiconify()
                 
             except Exception as e:

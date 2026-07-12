@@ -1,0 +1,248 @@
+    =====================================================================
+
+            ####  ###  ## ##    ######  ###  ##   ## ##### ####
+             @@  @@ @@ @@ @@      @@   @@ @@ @@   @@ @@    @@ @@
+             %%  %%     %%%%      %%   %% %% %% % %% %%%   %%%%
+             ::  :: ::    ::      ::   :: :: ::: ::: ::    :: ::
+            ''''  '''   '''       ''    '''  ''   '' ''''' '' ''
+
+             I     C     Y        T      O      W      E     R
+                                                                  
+    =====================================================================
+			      CUSTOM CHARACTERS
+    =====================================================================
+
+
+INTRODUCTION 
+
+    In Icy Tower 1.3 you can make your own characters, complete with their
+    own sound effects and background music. It's not altogether easy, but 
+    if you set your mind to it, you will succeed. 
+
+
+HOW TO ADD A FINISHED CHARACTER
+
+    This is the easy part. If you have downloaded a new character or 
+    received one from a friend, here's how to install it: 
+    
+    Simply copy the directory holding the new character into the 
+    characters/ directory and you're done! The directory tree should look 
+    like this when you're done:
+    
+    	icytower/
+    		characters/
+    			harold_the_homeboy/
+    				files...
+    			disco_dave/
+    				files...
+    			new_character/
+    				files...
+    				
+    (new_character is the directory of your new character (ie. it is named
+    what ever the character is named)).
+    
+    If you managed to install the new character correctly, it will now show 
+    up under GAME OPTIONS in the game.
+    
+
+HOW TO MAKE YOUR OWN CHARACTER
+
+    To make your own character you need three things. Frames (images of
+    the moves that the character can do), sounds (what the character can
+    say (and music)) and finally a script that tells the game what is what.
+    
+    The sounds and music are optional, and does not have to be created.
+
+
+CUSTOM CHARACTER CREATION GUIDE
+
+    Start by coming up with an idea for your character. It might take some
+    time to come up with a good one, but that's how it is. The whole process
+    will be a lot easier if you have planned what to do before hand.
+    
+    Now, first make a copy of the directory named 'template', but call it 
+    the name of your character instead. Enter the directory and rename the 
+    file 'template.txt' to whatever you called your character.
+    
+    Example: if you renamed the directory to 'jolly_joe', the new name of 
+    the text file should be 'jolly_joe.txt'. This is very important, if 
+    the directory and the text file don't have the same names, it wont 
+    work. (Make sure you can see the file extensions on the files, or 
+    you might do something wrong.)
+    
+
+CHARACTER GRAPHICS
+    
+    Let's start with the graphics. First off, since the graphics in Icy 
+    Tower is palette based, you need a paint program that can handle 
+    palettes. Not all programs can handle palettes, but here's a list
+    of a few programs that can:
+    
+    	Graphics Gale
+    	ProMotion (from Cosmigo)
+    	NeoPaint
+    	Autodesk Animator
+    	
+    Once you have started your paint program, locate the directory you 
+    created above and open the 'template.pcx' (or .bmp) file that is in 
+    there.
+    
+    You will see 15 frames containing outlines of Harold. Below each
+    frame is a short description. Here's a more informative description
+    of the frames:
+    
+  	IDLE1 - 3	These frames are the animation that Harold 
+  			performs when the player isn't moving him. 
+  			The sequence for one cycle is 1-2-1-3. Then it 
+  			restarts.
+  				
+  	WALK1 - 3	This is Harold's walk animation. You have three
+  			frames to play with, they will be flipped in 
+  			the game when Harold changes direction.
+  				
+  	JUMP1 - 3	These are the frames used when Harold makes a 
+  			medium jump. They show his way up, hanging in 
+  			air and down. They will also be flipped if needed.
+  			
+  	JUMP		The frame for the normal straight up jump.
+  	
+  	CHOCK		The frame shown when Harold is close to scroll 
+  			off the screen.
+  			
+  	ROTATE		The frame used for Harold's cartwheel jump.
+  	
+  	EDGE1 - 2	The animation Harold performs when standing on 
+  			an edge.
+  	
+  	
+    There you go, now you know how the frames will be used. Start 
+    overdrawing the frames of Harold with your own character. Don't forget 
+    to save!
+    
+    A note on using a palette based program. You cannot use just any colors, 
+    you only have 256 color to your disposal and half of them are already 
+    used by the game. Open up a view of the palette, you will see a large
+    chunk of cyan colors (color 144 - 223). These are unused and I suggest 
+    you use them for your character. (Ie you can change them into any color
+    without affecting the game.
+    
+    Be warned! If you change a color outside the cyan chunk, it will affect 
+    the game. If you know what you're doing you can create special 
+    environments for your character, but if you don't you will mess up the 
+    game. Caution is advised!
+    
+    Finally, save your character as either bmp or pcx in the directory you
+    created. Make sure you save in 256 color (8bpp).
+    
+
+CHARACTER SOUNDS
+
+    This is not so hard as the graphics. Icy Tower characters use simple
+    wav-type samples. You'll need eight for full customisation, but you 
+    can skip those you don't want.
+    
+    Here's a list of the sounds you can make.
+    
+    	greeting	played at the beginning of a new game
+    	jumplo		played at a small jump
+    	jumpmed		played at a medium jump
+    	jumphi		played at a high (cartwheel) jump
+    	edge		played when standing on an edge
+    	death		played when the character falls off screen
+    	pause		played when the game is paused
+    	bgmusic		played as background music (looped)
+    	
+    Create the sounds using the sound recorder/editor of your choice and
+    save them as wav. You can name them whatever you want, but the names
+    above are easy to remember. Put them all in the directory of your 
+    character.
+        
+
+CHARACTER SCRIPT
+
+    Finally you need to create a small text file that describes how the
+    resources you have created are to be used.
+    
+    Open up the text file previously named template.txt. (Now it's named
+    'the_name_of_the_character.txt', remember? :)
+    
+    Most of the information is all ready filled in, but here's how it works.
+    The game will look for keywords, and then load whatever that is written
+    after the keyword. For instance, the line
+    
+    	[frames]	harold.pcx
+    	
+    will tell the game to use the file harold.pcx when it looks for what
+    frames to use.
+    
+    The other keywords are: [jumplo], [jumpmed], [jumphi], [edge],
+    [greeting], [death], [pause] and [bgmusic]
+    
+    A sample script file could look like this:
+    
+        # graphics
+    	[frames] template.pcx
+    	
+        # sound
+    	[jumplo] 		jump_lo.wav  
+        [jumpmed] 		jump_mid.wav
+    	[jumphi]	 	jump_hi.wav   
+        [pause] 	 	wazup.wav
+    	[death]			falling.wav   
+        [greeting]		yo.wav   
+    	[edge]			edge.wav
+        [bgmusic]		bg_menu.wav
+    	
+    As you see, [frames] is the only keyword that has to do with
+    graphics, all the others has to do with sound. See the section above
+    on which sound that is played where.
+    
+    After each sound keyword, the name of the sound that should be played
+    should be written.
+    
+    
+PUTTING IT ALL TOGETHER
+
+    Now you should have a created a directory named 'my_character' (or
+    whatever you called it) in the characters directory. In it there 
+    should be an image with the frames, the sounds you want to use and
+    a text file with the same name as the directory (plus .txt).
+    
+    If you think you're all set to go, start up Icy Tower and select 
+    your character from the game options. If something is wrong with it, 
+    you will get messages during start up. Good luck!
+    
+    (If it doesn't work as planned, check the file log.txt that is 
+    created when you run Icy Tower, you might find clues there.)
+    
+
+HAVING TROUBLES?
+
+    If there's something you don't understand, or if you have a problem 
+	with getting your character to work properly, go to the forums at 
+	Free Lunch Design and ask. http://www.freelunchdesign.com
+    
+    
+IN CLOSING
+
+    If you make any good characters that you think other people would enjoy,
+    go to the forums at Free Lunch Design and show it to us!
+    http://www.freelunchdesign.com
+    
+    For more information on Icy Tower, please refer to the original manual
+    in readme.txt.
+    
+    
+    
+    
+    				- the end - 
+    				
+    				
+
+
+
+    
+
+
+
+

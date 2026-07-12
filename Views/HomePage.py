@@ -15,7 +15,8 @@ class GameCenterApp(ctk.CTk):
         super().__init__()
         
         self.title("GameCenter")
-        self.geometry("950x700")
+        #self.geometry("950x700")
+        self.state("zoomed")  # פותח את החלון במצב מסך מלא  
         
         # בניית העמודים (פריימים) בתוך אותו החלון
         self.main_menu_frame = MainMenuFrame(master=self, app_manager=self)
@@ -160,7 +161,7 @@ class MainMenuFrame(ctk.CTkFrame):
             width=160,
             height=45,
             corner_radius=8,
-            command=self.app_manager.show_settings
+            command=self.app_manager.show_games  # מצביע על הפונקציה שמציגה את עמוד המשחקים 
         )
         self.btn_settings.pack(side="left", padx=10)
 
