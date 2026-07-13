@@ -85,11 +85,11 @@ class GamesPage(ctk.CTkFrame):
     def launch_game(self, script_name):
         """מפעילה את המשחק, מחביאה את התפריט הראשי ומחזירה אותו כשהמשחק נסגר"""
         
-        # 1. חישוב דינמי של תיקיית השורש (עובד גם בריצה רגילה וגם בתוך ה-exe)
+        # 1. חישוב דינמי של תיקיית השורש
         current_dir = os.path.dirname(os.path.abspath(__file__))
         project_root = os.path.dirname(current_dir)
         
-        # נתיב מלא לקובץ המשחק או ה-exe
+        # נתיב מלא לקובץ המשחק
         full_path = os.path.join(project_root, "Games", script_name)
         
         if os.path.exists(full_path):
@@ -99,15 +99,25 @@ class GamesPage(ctk.CTkFrame):
                 
                 game_dir = os.path.dirname(full_path)
                 
-                # 2. בדיקה האם מדובר בקובץ הרצה חיצוני (exe) כמו Icy Tower
+                # 2. הרצת המשחק בהתאם לסוג הקובץ
                 if full_path.endswith(".exe"):
+                    # עבור Icy Tower
                     subprocess.run([full_path], cwd=game_dir)
                 else:
-                    # בדיקה האם האפליקציה רצה כקובץ קומפילציה (EXE של PyInstaller)
+                    # עבור משחקי Pygame ופייתון
                     if hasattr(sys, '_MEIPASS'):
-                        # בתוך ה-EXE, אין לנו מפרש פייתון חיצוני, לכן נריץ את קובץ ה-py 
-                        # באמצעות פקודת המערכת הכללית של ווינדוס (cmd /c) שמפעילה קבצי פייתון
-                        subprocess.run(["cmd", "/c", sys.executable, full_path], cwd=game_dir)
+                        # אנחנו בתוך ה-EXE של PyInstaller!
+                        # במצב onedir, קובץ ה-python.exe האמיתי נמצא באותה תיקייה של ה-HomePage.exe שלך.
+                        # נמצא את התיקייה שבה נמצא ה-HomePage.exe הנוכחי:
+                        exe_dir = os.path.dirname(sys.executable)
+                        internal_python = os.path.join(exe_dir, "python.exe")
+                        
+                        if os.path.exists(internal_python):
+                            # מריצים את המשחק באמצעות הפייתון הפנימי והנקי שארוז באפליקציה
+                            subprocess.run([internal_python, full_path], cwd=game_dir)
+                        else:
+                            # אם מסיבה כלשהי הוא לא שם, ננסה להשתמש בבסיס המערכת
+                            subprocess.run(["python", full_path], cwd=game_dir)
                     else:
                         # ריצה רגילה בזמן פיתוח ב-VS Code
                         subprocess.run([sys.executable, full_path], cwd=game_dir)
@@ -116,10 +126,10 @@ class GamesPage(ctk.CTkFrame):
                 root.deiconify()
                 
             except Exception as e:
-                print(f"Error launching {script_name}: {e}")
+                from tkinter import messagebox
+                messagebox.showerror("Error", f"שגיאה בהפעלת המשחק:\n{e}")
                 self.winfo_toplevel().deiconify()
         else:
-            # במקום רק להדפיס, נקפיץ הודעה למסך כדי שתראה בדיוק איזה נתיב התוכנה חיפשה ולא מצאה
             from tkinter import messagebox
             messagebox.showerror("Error", f"הקובץ לא נמצא בנתיב המבוקש:\n{full_path}")
             self.winfo_toplevel().deiconify()
