@@ -1,9 +1,9 @@
 Icy Tower v1.3.1 - log file
 ----------------------------
 Game started with the following commands:
-   C:\Users\novos\Documents\GameCenter\Games\icytower1.3\icytower13.exe
+   C:\Users\novos\Documents\GameCenter\dist\HomePage\Games\icytower1.3\icytower13.exe
 Working directory is:
-   C:\Users\novos\Documents\GameCenter\Games\icytower1.3\
+   C:\Users\novos\Documents\GameCenter\dist\HomePage\Games\icytower1.3\
 
 INIT GAME
 Creating hiscore tables
@@ -52,10 +52,9 @@ MAIN MENU LOOP
  cc done
  setting up play data
  play started
-  game paused with esc
-  game quit from esc pause
-  game unpaused
+  player quit after dying
  play ended
+ replay_menu launched
  freeing custom data
     destroying datafile
     destroying jump lo
