@@ -52,8 +52,9 @@ MAIN MENU LOOP
  cc done
  setting up play data
  play started
-  player quit after dying
  play ended
+ player qualified for highscore
+  saving config and scores
  replay_menu launched
  freeing custom data
     destroying datafile
@@ -64,6 +65,7 @@ MAIN MENU LOOP
     destroying edge
     destroying yo
     destroying wazup
+ load replay selected
 
 Showing credits
 

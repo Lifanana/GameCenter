@@ -143,11 +143,11 @@ class GamesPage(ctk.CTkFrame):
 
         # נתיבי המשחקים יחסית לתיקיית Games הראשי
         games_list = [
-            {"name": "🐍 Snake Game", "script": "Snake.py"},
-            {"name": "🔢 2048", "script": "2048.py"},
-            {"name": "❌ Tic Tac Toe", "script": "XO.py"},
-            {"name": "🤔 Guess The Number", "script": "GuessNumber.py"},
-            {"name": "🐢 Turtle Control", "script": "Turtle.py"},
+            {"name": "🐍 Snake Game", "script": "Snake.exe"},
+            {"name": "🔢 2048", "script": "2048.exe"},
+            {"name": "❌ Tic Tac Toe", "script": "XO.exe"},
+            {"name": "🤔 Guess The Number", "script": "GuessNumber.exe"},
+            {"name": "🐢 Turtle Control", "script": "Turtle.exe"},
            {"name": "🏔 Icy Tower", "script": os.path.join("icytower1.3", "icytower13.exe")}
         ]
 
