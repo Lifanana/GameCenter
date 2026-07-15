@@ -65,15 +65,15 @@ class MainMenuFrame(ctk.CTkFrame):
 
         # רשימת המשחקים: קובצי ריצה, שמות ותמונות תואמות
         games_list = [
-            {"name": "🐍 Snake Game", "script": "Snake.exe", "img_name": "Snake.png"},
-            {"name": "🔢 2048", "script": "2048.exe", "img_name": "2048.png"},
-            {"name": "❌ Tic Tac Toe", "script": "XO.exe", "img_name": "XO.png"},
-            {"name": "🤔 Guess Number", "script": "GuessNumber.exe", "img_name": "GuessNumber.png"},
-            {"name": "🐢 Turtle Control", "script": "Turtle.exe", "img_name": "Turtle.png"},
+            {"name": "🐍 Snake Game", "script": "Snake.py", "img_name": "Snake.png"},
+            {"name": "🔢 2048", "script": "2048.py", "img_name": "2048.png"},
+            {"name": "❌ Tic Tac Toe", "script": "XO.py", "img_name": "XO.png"},
+            {"name": "🤔 Guess Number", "script": "GuessNumber.py", "img_name": "GuessNumber.png"},
+            {"name": "🐢 Turtle Control", "script": "Turtle.py", "img_name": "Turtle.png"},
             {"name": "🏔 Icy Tower", "script": os.path.join("icytower1.3", "icytower13.exe"), "img_name": "IcyTower.png"},
-            {"name": "Maze", "script": "Maze.exe", "img_name": "Maze.png"}
-            {"name": "Stanga", "script": "", "img_name": ""}
-            {"name": "Maze", "script": "", "img_name": ""}
+            {"name": "Maze", "script": "Maze.py", "img_name": "Maze.png"},
+            {"name": "Stanga", "script": "", "img_name": ""},
+            {"name": "Maze", "script": "", "img_name": ""},
             {"name": "Maze", "script": "", "img_name": ""}
         ]
 
