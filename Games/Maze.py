@@ -149,7 +149,7 @@ class GameWinWindow(ctk.CTk):
 # --- הגדרות וקבועים עבור Pygame ---
 WIDTH = 1000
 HEIGHT = 650
-GRID_SIZE = 25  # גודל משבצת מעט גדול יותר לנראות משופרת ב-1000x650
+GRID_SIZE = 25  
 COLS = (WIDTH - 40) // GRID_SIZE
 ROWS = (HEIGHT - 40) // GRID_SIZE
 
@@ -214,7 +214,7 @@ def reveal_area(grid, r, c):
 
 
 def run_pygame_maze(game_mode):
-    """מריצה את משחק המבוך ב-Pygame ומחזירה True ברגע שהמשתמש מנצח"""
+    """מריצה את משחק המבוך ב-Pygame ומחזירה סטטוס בהתאם לאופן היציאה מהמשחק"""
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("GameCenter - Maze Game")
@@ -236,15 +236,18 @@ def run_pygame_maze(game_mode):
         reveal_area(grid, player_pos[0], player_pos[1])
 
     running = True
-    reached_goal = False
 
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                sys.exit()
+                return "exit"
             
             elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    return "menu"  # <-- שינוי: החזרה ישירה לתפריט ללא מסך הניצחון!
+                
                 r, c = player_pos
                 current_cell = grid[r][c]
                 
@@ -261,11 +264,10 @@ def run_pygame_maze(game_mode):
                 if game_mode == "fog":
                     reveal_area(grid, player_pos[0], player_pos[1])
 
-        # בדיקת הגעה ליעד
+        # בדיקת הגעה ליעד (ניצחון)
         if player_pos == goal_pos:
-            reached_goal = True
-            running = False
-            continue
+            pygame.quit()
+            return "win"  # <-- שינוי: השחקן אכן הגיע ליציאה והשלים את המבוך
 
         # ציור
         screen.fill(BG_COLOR)
@@ -305,7 +307,7 @@ def run_pygame_maze(game_mode):
         clock.tick(30)
 
     pygame.quit()
-    return reached_goal
+    return "exit"
 
 
 # --- לולאת ניהול המשחק הראשית והניווט ---
@@ -326,11 +328,11 @@ def main():
                 break
             current_mode = menu.selected_mode
 
-        # הפעלת משחק המבוך ב-Pygame
-        won = run_pygame_maze(current_mode)
+        # הפעלת משחק המבוך ב-Pygame וקבלת תוצאת הריצה
+        result = run_pygame_maze(current_mode)
 
         # אם סיימנו את המבוך בהצלחה, מציגים את מסך הניצחון
-        if won:
+        if result == "win":
             win_win = GameWinWindow()
             win_win.mainloop()
 
@@ -340,6 +342,12 @@ def main():
                 current_mode = None
             else:
                 break
+        
+        # אם המשתמש לחץ על ESC, נחזיר אותו ישירות לתפריט הראשי
+        elif result == "menu":
+            current_mode = None
+            
+        # אם המשחק נסגר לחלוטין (ב-X)
         else:
             break
 

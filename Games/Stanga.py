@@ -12,8 +12,9 @@ class StangaStartWindow(ctk.CTk):
         super().__init__()
         
         self.title("Stanga - Start Menu")
-        self.geometry("500x450")
+        self.geometry("500x480")  # שינוי גודל החלון ל-500x480
         self.resizable(False, False)
+        self.back_to_games = False  # משתנה שבודק אם ביקשנו לחזור ל-Games Center
         ctk.set_appearance_mode("dark")
         
         # כותרת ראשית
@@ -65,11 +66,29 @@ class StangaStartWindow(ctk.CTk):
             command=self.launch_game
         )
         self.start_btn.pack(pady=30)
+
+         # כפתור חזרה ל-Games Center
+        self.btn_back = ctk.CTkButton(
+            self,
+            text="⬅️ Back to Games Center",
+            font=ctk.CTkFont(family="Arial", size=15, weight="bold"),
+            fg_color="#A83232",
+            hover_color="#822121",
+            width=260,
+            height=100,
+            command=self.return_to_main_menu
+        )
+        self.btn_back.pack(pady=30)
         
         # נתונים שיועברו למשחק
         self.p1_name = "Player 1"
         self.p2_name = "Player 2"
         self.should_start = False
+
+    def return_to_main_menu(self):
+         """מסמן שרוצים לחזור לתפריט הראשי וסוגר את החלון"""
+         self.back_to_games = True
+         self.destroy()
 
     def launch_game(self):
         self.p1_name = self.p1_input.get().strip() or "Player 1"
@@ -194,6 +213,10 @@ def run_stanga_game(p1_name, p2_name):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN:
+                 if event.key == pygame.K_ESCAPE:
+                     pygame.quit()
+                     return True
 
         # עדכון תנועות
         player1.move(keys)
@@ -359,10 +382,22 @@ def run_stanga_game(p1_name, p2_name):
 # 3. ניתוב הפעלה ראשי
 # ==========================================
 if __name__ == "__main__":
-    # א. הפעלת תפריט ההתחלה ב-CustomTkinter
-    menu = StangaStartWindow()
-    menu.mainloop()
-    
-    # ב. אם השחקן לחץ על "התחל", נפתח את חלון ה-Pygame של המשחק
-    if menu.should_start:
-        run_stanga_game(menu.p1_name, menu.p2_name)
+    while True:
+        menu = StangaStartWindow()
+        menu.mainloop()
+        
+        # אם המשתמש לחץ על כפתור חזרה ל-Games Center
+        if menu.back_to_games:
+            break
+            
+        # אם המשתמש לחץ על כפתור התחלת משחק
+        if menu.should_start:
+            # מריצים את המשחק ושומרים את הערך המוחזר (True ל-ESC, False ליציאה)
+            should_return_to_menu = run_stanga_game(menu.p1_name, menu.p2_name)
+            
+            # אם לא לחצו ESC (למשל סגרו את החלון ב-X), נצא מהלולאה
+            if not should_return_to_menu:
+                break
+            # אם לחצו ESC, הלולאה תמשיך ותפתח שוב את חלון ה-StangaStartWindow
+        else:
+            break        
