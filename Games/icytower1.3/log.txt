@@ -36,6 +36,36 @@ Initiating menu controls
 Resetting menu
 
 MAIN MENU LOOP
+ new game selected
+ init new game
+ setting up for replay recording
+ creating map layout
+ loading custom character: harold_the_homeboy
+  loading from datafile
+    loading jump lo
+    loading jump med
+    loading jump hi
+    loading yo
+    loading wazup
+    loading falling
+    loading edge
+ cc done
+ setting up play data
+ play started
+  player quit after dying
+ play ended
+ player qualified for highscore
+  saving config and scores
+ replay_menu launched
+ freeing custom data
+    destroying datafile
+    destroying jump lo
+    destroying jump med
+    destroying jump hi
+    destroying fall
+    destroying edge
+    destroying yo
+    destroying wazup
 
 Showing credits
 

@@ -72,9 +72,14 @@ class MainMenuFrame(ctk.CTkFrame):
             {"name": "🐢 Turtle Control", "script": "Turtle.py", "img_name": "Turtle.png"},
             {"name": "🏔 Icy Tower", "script": os.path.join("icytower1.3", "icytower13.exe"), "img_name": "IcyTower.png"},
             {"name": "Maze", "script": "Maze.py", "img_name": "Maze.png"},
-            {"name": "Stanga", "script": "", "img_name": ""},
-            {"name": "Maze", "script": "", "img_name": ""},
-            {"name": "Maze", "script": "", "img_name": ""}
+            {"name": "⚽Stanga", "script": "Stanga.py", "img_name": "Stanga.png"},
+            {"name": "🧱 DX Ball", "script": os.path.join("DX-Ball 2", "DXBall2.exe"), "img_name": "DXBall.png"},
+            {"name": "🐦 Flabby Bird ", "script": "FlabbyBird.py", "img_name": "FlabbyBird.png"},
+            {"name": "🧠Simon Says", "script": "SimonSays.py", "img_name": "SimonSays.png"},
+            {"name": "🃏Memory Game", "script": "MemoryGame.py", "img_name": "MemoryGame.png"},
+            {"name": "​🪵Hangman", "script": "Hangman.py", "img_name": "Hangman.png"},
+            {"name": "🟡 Pac-Man", "script": "PacMan.py", "img_name": "PacMan.png"},
+            {"name": "🏓 Ping Pong", "script": "PingPong.py", "img_name": "PingPong.png"}
         ]
 
         # בניית ה-Grid ב-2 עמודות

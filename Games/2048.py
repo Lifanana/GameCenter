@@ -7,6 +7,7 @@ import sys
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
+
 # --- מחלקת עמוד הפתיחה ב-CustomTkinter ---
 class MenuApp(ctk.CTk):
     def __init__(self):
@@ -14,10 +15,13 @@ class MenuApp(ctk.CTk):
         
         self.title("2048 - תפריט פתיחה")
         self.geometry("450x400")
-        #self.resizable(False, False)
+        self.resizable(False, False)
         
         self.start_game_chosen = False
-
+        
+        # קישור מקש Escape למתודה שמסכלת פעפוע אירועים
+        self.bind("<Escape>", self.go_to_menu_on_escape)
+        
         # כותרת המשחק
         self.title_label = ctk.CTkLabel(
             self, 
@@ -49,7 +53,7 @@ class MenuApp(ctk.CTk):
         # כפתור יציאה
         self.btn_exit = ctk.CTkButton(
             self,
-           text="⬅️ Back to Games Center",
+            text="⬅️ Back to Games Center",
             font=ctk.CTkFont(family="Arial", size=14),
             fg_color="#A83232",
             hover_color="#822121",
@@ -58,6 +62,10 @@ class MenuApp(ctk.CTk):
             command=self.destroy
         )
         self.btn_exit.pack(pady=(40, 10))
+
+    def go_to_menu_on_escape(self, event=None):
+        """מונע מהאירוע לזלוג לחלון האב של ה-Games Center ומבטל את הסגירה"""
+        return "break"
 
     def start_game(self):
         self.start_game_chosen = True
@@ -71,7 +79,10 @@ class GameOverWindow(ctk.CTk):
         
         self.title("Game Over")
         self.geometry("400x350")
-        #self.resizable(False, False)
+        self.resizable(False, False)
+        
+        # מניעת סגירת האפליקציה כולה בלחיצה על Escape במסך ההפסד
+        self.bind("<Escape>", lambda event: "break")
         
         self.action_chosen = None  # ישמור "restart" או "menu"
 
@@ -273,6 +284,11 @@ def run_pygame_game():
                 sys.exit()
                 
             if event.type == pygame.KEYDOWN:
+                # לחיצה על Escape בתוך המשחק מחזירה מיד לתפריט
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    return "go_to_menu"
+
                 moved = False
                 if event.key == pygame.K_LEFT:
                     board, moved, score = move_left(board, score)
@@ -305,14 +321,19 @@ def main():
             if not menu.start_game_chosen:
                 break
 
-        # מריץ את המשחק ומקבל בחזרה את הניקוד הסופי
+        # מריץ את המשחק ומקבל בחזרה את הניקוד הסופי (או פקודת חזרה לתפריט)
         final_score = run_pygame_game()
+
+        # אם השחקן יצא מהמשחק עם Escape, נחזור ישירות לתפריט הראשי
+        if final_score == "go_to_menu":
+            show_main_menu = True
+            continue
 
         # פותח את חלון ה-Game Over ומציג את הניקוד
         game_over_win = GameOverWindow(final_score)
         game_over_win.mainloop()
 
-        # ניווט לפי בחירת המשתמש
+        # ניווט לפי בחירת המשתמש במסך ה-Game Over
         if game_over_win.action_chosen == "restart":
             show_main_menu = False  # מדלג על תפריט הפתיחה ומתחיל משחק חדש ישירות
         elif game_over_win.action_chosen == "menu":
