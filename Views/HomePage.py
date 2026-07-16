@@ -65,21 +65,21 @@ class MainMenuFrame(ctk.CTkFrame):
 
         # רשימת המשחקים: קובצי ריצה, שמות ותמונות תואמות
         games_list = [
-            {"name": "🐍 Snake Game", "script": "Snake.py", "img_name": "Snake.png"},
-            {"name": "🔢 2048", "script": "2048.py", "img_name": "2048.png"},
-            {"name": "❌ Tic Tac Toe", "script": "XO.py", "img_name": "XO.png"},
-            {"name": "🤔 Guess Number", "script": "GuessNumber.py", "img_name": "GuessNumber.png"},
-            {"name": "🐢 Turtle Control", "script": "Turtle.py", "img_name": "Turtle.png"},
+            {"name": "🐍 Snake Game", "script": "Snake.exe", "img_name": "Snake.png"},
+            {"name": "🔢 2048", "script": "2048.exe", "img_name": "2048.png"},
+            {"name": "❌ Tic Tac Toe", "script": "XO.exe", "img_name": "XO.png"},
+            {"name": "🤔 Guess Number", "script": "GuessNumber.exe", "img_name": "GuessNumber.png"},
+            {"name": "🐢 Turtle Control", "script": "Turtle.exe", "img_name": "Turtle.png"},
             {"name": "🏔 Icy Tower", "script": os.path.join("icytower1.3", "icytower13.exe"), "img_name": "IcyTower.png"},
-            {"name": "Maze", "script": "Maze.py", "img_name": "Maze.png"},
-            {"name": "⚽Stanga", "script": "Stanga.py", "img_name": "Stanga.png"},
+            {"name": "Maze", "script": "Maze.exe", "img_name": "Maze.png"},
+            {"name": "⚽Stanga", "script": "Stanga.exe", "img_name": "Stanga.png"},
             {"name": "🧱 DX Ball", "script": os.path.join("DX-Ball 2", "DXBall2.exe"), "img_name": "DXBall.png"},
-            {"name": "🐦 Flabby Bird ", "script": "FlabbyBird.py", "img_name": "FlabbyBird.png"},
-            {"name": "🧠Simon Says", "script": "SimonSays.py", "img_name": "SimonSays.png"},
-            {"name": "🃏Memory Game", "script": "MemoryGame.py", "img_name": "MemoryGame.png"},
-            {"name": "​🪵Hangman", "script": "Hangman.py", "img_name": "Hangman.png"},
-            {"name": "🟡 Pac-Man", "script": "PacMan.py", "img_name": "PacMan.png"},
-            {"name": "🏓 Ping Pong", "script": "PingPong.py", "img_name": "PingPong.png"}
+            {"name": "🐦 Flabby Bird ", "script": "FlabbyBird.exe", "img_name": "FlabbyBird.png"},
+            {"name": "🧠Simon Says", "script": "SimonSays.exe", "img_name": "SimonSays.png"},
+            {"name": "🃏Memory Game", "script": "MemoryGame.exe", "img_name": "MemoryGame.png"},
+            {"name": "​🪵Hangman", "script": "Hangman.exe", "img_name": "Hangman.png"},
+            {"name": "🟡 Pac-Man", "script": "PacMan.exe", "img_name": "PacMan.png"},
+            {"name": "🏓 Ping Pong", "script": "PingPong.exe", "img_name": "PingPong.png"}
         ]
 
         # בניית ה-Grid ב-2 עמודות
