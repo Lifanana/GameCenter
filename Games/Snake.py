@@ -7,6 +7,7 @@ import sys
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
+
 # --- מחלקת עמוד הפתיחה ב-CustomTkinter ---
 class SnakeMenuApp(ctk.CTk):
     def __init__(self):
@@ -18,6 +19,9 @@ class SnakeMenuApp(ctk.CTk):
         
         self.selected_mode = None
         self.back_to_games = False  # משתנה חדש שבודק אם ביקשנו לחזור אחורה
+
+        # מניעת סגירת האפליקציה כולה בלחיצה על Escape במסך הפתיחה
+        self.bind("<Escape>", self.go_to_menu_on_escape)
 
         # כותרת המשחק
         self.title_label = ctk.CTkLabel(
@@ -73,6 +77,10 @@ class SnakeMenuApp(ctk.CTk):
         )
         self.btn_back.pack(pady=30)  # מרווח קצת יותר גדול למטה לעיצוב נקי
 
+    def go_to_menu_on_escape(self, event=None):
+        """מונע מהאירוע לזלוג לחלון האב של ה-Games Center ומבטל את הסגירה"""
+        return "break"
+
     def set_mode_and_close(self, mode):
         self.selected_mode = mode
         self.destroy()
@@ -89,9 +97,11 @@ class GameOverWindow(ctk.CTk):
         super().__init__()
         
         self.title("Game Over")
-        # תיקון קל בקוד המקורי שלך: החלפנו את ה-* ב-x במידות הגאומטריה למניעת קריסה
         self.geometry("1000x650")
         self.resizable(False, False)
+        
+        # מניעת סגירת האפליקציה כולה בלחיצה על Escape במסך ההפסד
+        self.bind("<Escape>", lambda event: "break")
         
         self.action_chosen = None  # ישמור "restart" או "menu"
 
@@ -196,6 +206,11 @@ def run_pygame_game(game_mode):
                 sys.exit()
             
             elif event.type == pygame.KEYDOWN:
+                # לחיצה על Escape בתוך המשחק תסגור אותו ותחזיר לתפריט
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    return "go_to_menu"
+
                 if event.key == pygame.K_UP and direction != (0, GRID_SIZE):
                     direction = (0, -GRID_SIZE)
                 elif event.key == pygame.K_DOWN and direction != (0, -GRID_SIZE):
@@ -272,8 +287,13 @@ def main():
                 break
             current_mode = menu.selected_mode
 
-        # הפעלת המשחק ב-Pygame וקבלת הניקוד הסופי
+        # הפעלת המשחק ב-Pygame וקבלת הניקוד הסופי (או פקודת חזרה לתפריט)
         final_score = run_pygame_game(current_mode)
+
+        # אם השחקן יצא מהמשחק עם Escape, נחזור ישירות לתפריט הראשי של הנחש
+        if final_score == "go_to_menu":
+            current_mode = None
+            continue
 
         # פתיחת חלון ה-Game Over ב-CustomTkinter
         game_over_win = GameOverWindow(final_score)

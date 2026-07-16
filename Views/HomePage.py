@@ -79,7 +79,7 @@ class MainMenuFrame(ctk.CTkFrame):
             {"name": "🃏Memory Game", "script": "MemoryGame.py", "img_name": "MemoryGame.png"},
             {"name": "​🪵Hangman", "script": "Hangman.py", "img_name": "Hangman.png"},
             {"name": "🟡 Pac-Man", "script": "PacMan.py", "img_name": "PacMan.png"},
-         {"name": "🏓 Ping Pong", "script": "PingPong.py", "img_name": "PingPong.png"}
+            {"name": "🏓 Ping Pong", "script": "PingPong.py", "img_name": "PingPong.png"}
         ]
 
         # בניית ה-Grid ב-2 עמודות

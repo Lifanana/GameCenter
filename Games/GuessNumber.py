@@ -16,10 +16,16 @@ class GuessNumberGame(ctk.CTk):
         # משתני המשחק
         self.secret_number = 0
         self.attempts = 0
+
+        self.bind("<Escape>", self.go_to_menu)  # מאפשר סגירה עם מקש ESC
         
         # טעינת מסך הפתיחה בהתחלה
         self.show_menu_screen()
 
+    def go_to_menu(self, event=None):
+        """מעביר את המשתמש חזרה למסך הפתיחה"""
+        self.show_menu_screen()
+        
     def show_menu_screen(self):
         """מציג את מסך הפתיחה של המשחק"""
         self.clear_screen()
