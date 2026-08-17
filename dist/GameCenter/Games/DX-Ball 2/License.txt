@@ -1,0 +1,44 @@
+This document is a legal agreement between you, the End User,
+and Longbow Digital Arts.  By installing or using DX-Ball 2 ("the
+Software Product"), you agree to abide by the terms in this agreement.
+
+This version of the Software Product, with 24 levels, is provided
+free for your use.  You may freely duplicate and redistribute the
+Software Product in its original self-installing archive form.
+
+You may not distribute any components of the Software Product
+separately, outside of the original self-installing archive provided
+by Longbow Digital Arts.  You may not charge more than a reasonable
+fee for distribution media, if distributed on floppy disk, CD-ROM, or
+other digital media.  Electronic distribution must be free of charge.
+You may not disassemble, decompile, or otherwise reverse engineer
+the Software Product or any of its data or level files in any way,
+shape, or form.  You may not distribute add-ons or levels of any kind
+for use with the Software Product without the agreement of
+Longbow Digital Arts.
+
+THE SOFTWARE PRODUCT IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND,
+EITHER EXPRESS OR IMPLIED, INCLUDING THE WARRANTIES OF MERCHANTABILITY
+OR FITNESS FOR A PARTICULAR PURPOSE.  BY USING THE SOFTWARE PRODUCT,
+YOU AGREE TO ACCEPT ALL LIABILITY REGARDING IT'S USE OR MISUSE.
+
+End of legal agreement.
+
+
+
+Plain English Approximation:
+
+Feel free to e-mail this DX-Ball 2 demo to all your friends!  Just don't
+sell it.
+
+Please don't hack the file formats, distribute stuff that works with
+our game, or write level or graphics editors (free or not) without
+our prior approval.  (Hey, we did make it!)
+
+DX-Ball 2 has been tested on a wide range of computer systems, and
+we'll attempt to assist you if you experience problems getting the
+game running on your system.  For more info, please see:
+http://www.LongbowDigitalArts.com/support.html
+
+Thanks for downloading DX-Ball 2, we hope you enjoy playing!
+
