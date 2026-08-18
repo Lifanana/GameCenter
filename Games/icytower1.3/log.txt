@@ -14,7 +14,7 @@ Installing timers
 Installing keyboard
 Installing sound
 Installing joystick/gamepad
- gamepad has 0 buttons
+ gamepad has 12 buttons
  getting values from gamepad.txt
 Reserving memory
 Loading data
@@ -56,6 +56,524 @@ MAIN MENU LOOP
  play ended
  player qualified for highscore
   saving config and scores
+ replay_menu launched
+  play again selected
+ freeing custom data
+    destroying datafile
+    destroying jump lo
+    destroying jump med
+    destroying jump hi
+    destroying fall
+    destroying edge
+    destroying yo
+    destroying wazup
+ init new game
+ setting up for replay recording
+ creating map layout
+ loading custom character: harold_the_homeboy
+  loading from datafile
+    loading jump lo
+    loading jump med
+    loading jump hi
+    loading yo
+    loading wazup
+    loading falling
+    loading edge
+ cc done
+ setting up play data
+ play started
+  player quit after dying
+ play ended
+ player qualified for highscore
+  saving config and scores
+ replay_menu launched
+  play again selected
+ freeing custom data
+    destroying datafile
+    destroying jump lo
+    destroying jump med
+    destroying jump hi
+    destroying fall
+    destroying edge
+    destroying yo
+    destroying wazup
+ init new game
+ setting up for replay recording
+ creating map layout
+ loading custom character: harold_the_homeboy
+  loading from datafile
+    loading jump lo
+    loading jump med
+    loading jump hi
+    loading yo
+    loading wazup
+    loading falling
+    loading edge
+ cc done
+ setting up play data
+ play started
+  player quit after dying
+ play ended
+ player qualified for highscore
+  saving config and scores
+ replay_menu launched
+  play again selected
+ freeing custom data
+    destroying datafile
+    destroying jump lo
+    destroying jump med
+    destroying jump hi
+    destroying fall
+    destroying edge
+    destroying yo
+    destroying wazup
+ init new game
+ setting up for replay recording
+ creating map layout
+ loading custom character: harold_the_homeboy
+  loading from datafile
+    loading jump lo
+    loading jump med
+    loading jump hi
+    loading yo
+    loading wazup
+    loading falling
+    loading edge
+ cc done
+ setting up play data
+ play started
+  player quit after dying
+ play ended
+ player qualified for highscore
+  saving config and scores
+ replay_menu launched
+  play again selected
+ freeing custom data
+    destroying datafile
+    destroying jump lo
+    destroying jump med
+    destroying jump hi
+    destroying fall
+    destroying edge
+    destroying yo
+    destroying wazup
+ init new game
+ setting up for replay recording
+ creating map layout
+ loading custom character: harold_the_homeboy
+  loading from datafile
+    loading jump lo
+    loading jump med
+    loading jump hi
+    loading yo
+    loading wazup
+    loading falling
+    loading edge
+ cc done
+ setting up play data
+ play started
+  player quit after dying
+ play ended
+ player qualified for highscore
+  saving config and scores
+ replay_menu launched
+  play again selected
+ freeing custom data
+    destroying datafile
+    destroying jump lo
+    destroying jump med
+    destroying jump hi
+    destroying fall
+    destroying edge
+    destroying yo
+    destroying wazup
+ init new game
+ setting up for replay recording
+ creating map layout
+ loading custom character: harold_the_homeboy
+  loading from datafile
+    loading jump lo
+    loading jump med
+    loading jump hi
+    loading yo
+    loading wazup
+    loading falling
+    loading edge
+ cc done
+ setting up play data
+ play started
+  player quit after dying
+ play ended
+ replay_menu launched
+  play again selected
+ freeing custom data
+    destroying datafile
+    destroying jump lo
+    destroying jump med
+    destroying jump hi
+    destroying fall
+    destroying edge
+    destroying yo
+    destroying wazup
+ init new game
+ setting up for replay recording
+ creating map layout
+ loading custom character: harold_the_homeboy
+  loading from datafile
+    loading jump lo
+    loading jump med
+    loading jump hi
+    loading yo
+    loading wazup
+    loading falling
+    loading edge
+ cc done
+ setting up play data
+ play started
+  player quit after dying
+ play ended
+ player qualified for highscore
+  saving config and scores
+ replay_menu launched
+  play again selected
+ freeing custom data
+    destroying datafile
+    destroying jump lo
+    destroying jump med
+    destroying jump hi
+    destroying fall
+    destroying edge
+    destroying yo
+    destroying wazup
+ init new game
+ setting up for replay recording
+ creating map layout
+ loading custom character: harold_the_homeboy
+  loading from datafile
+    loading jump lo
+    loading jump med
+    loading jump hi
+    loading yo
+    loading wazup
+    loading falling
+    loading edge
+ cc done
+ setting up play data
+ play started
+  player quit after dying
+ play ended
+ replay_menu launched
+  play again selected
+ freeing custom data
+    destroying datafile
+    destroying jump lo
+    destroying jump med
+    destroying jump hi
+    destroying fall
+    destroying edge
+    destroying yo
+    destroying wazup
+ init new game
+ setting up for replay recording
+ creating map layout
+ loading custom character: harold_the_homeboy
+  loading from datafile
+    loading jump lo
+    loading jump med
+    loading jump hi
+    loading yo
+    loading wazup
+    loading falling
+    loading edge
+ cc done
+ setting up play data
+ play started
+  player quit after dying
+ play ended
+ replay_menu launched
+  play again selected
+ freeing custom data
+    destroying datafile
+    destroying jump lo
+    destroying jump med
+    destroying jump hi
+    destroying fall
+    destroying edge
+    destroying yo
+    destroying wazup
+ init new game
+ setting up for replay recording
+ creating map layout
+ loading custom character: harold_the_homeboy
+  loading from datafile
+    loading jump lo
+    loading jump med
+    loading jump hi
+    loading yo
+    loading wazup
+    loading falling
+    loading edge
+ cc done
+ setting up play data
+ play started
+  player quit after dying
+ play ended
+ player qualified for highscore
+  saving config and scores
+ replay_menu launched
+  play again selected
+ freeing custom data
+    destroying datafile
+    destroying jump lo
+    destroying jump med
+    destroying jump hi
+    destroying fall
+    destroying edge
+    destroying yo
+    destroying wazup
+ init new game
+ setting up for replay recording
+ creating map layout
+ loading custom character: harold_the_homeboy
+  loading from datafile
+    loading jump lo
+    loading jump med
+    loading jump hi
+    loading yo
+    loading wazup
+    loading falling
+    loading edge
+ cc done
+ setting up play data
+ play started
+  player quit after dying
+ play ended
+ replay_menu launched
+ freeing custom data
+    destroying datafile
+    destroying jump lo
+    destroying jump med
+    destroying jump hi
+    destroying fall
+    destroying edge
+    destroying yo
+    destroying wazup
+ new game selected
+ init new game
+ setting up for replay recording
+ creating map layout
+ loading custom character: harold_the_homeboy
+  loading from datafile
+    loading jump lo
+    loading jump med
+    loading jump hi
+    loading yo
+    loading wazup
+    loading falling
+    loading edge
+ cc done
+ setting up play data
+ play started
+  player quit after dying
+ play ended
+ replay_menu launched
+  play again selected
+ freeing custom data
+    destroying datafile
+    destroying jump lo
+    destroying jump med
+    destroying jump hi
+    destroying fall
+    destroying edge
+    destroying yo
+    destroying wazup
+ init new game
+ setting up for replay recording
+ creating map layout
+ loading custom character: harold_the_homeboy
+  loading from datafile
+    loading jump lo
+    loading jump med
+    loading jump hi
+    loading yo
+    loading wazup
+    loading falling
+    loading edge
+ cc done
+ setting up play data
+ play started
+  player quit after dying
+ play ended
+ replay_menu launched
+  play again selected
+ freeing custom data
+    destroying datafile
+    destroying jump lo
+    destroying jump med
+    destroying jump hi
+    destroying fall
+    destroying edge
+    destroying yo
+    destroying wazup
+ init new game
+ setting up for replay recording
+ creating map layout
+ loading custom character: harold_the_homeboy
+  loading from datafile
+    loading jump lo
+    loading jump med
+    loading jump hi
+    loading yo
+    loading wazup
+    loading falling
+    loading edge
+ cc done
+ setting up play data
+ play started
+  player quit after dying
+ play ended
+ replay_menu launched
+  play again selected
+ freeing custom data
+    destroying datafile
+    destroying jump lo
+    destroying jump med
+    destroying jump hi
+    destroying fall
+    destroying edge
+    destroying yo
+    destroying wazup
+ init new game
+ setting up for replay recording
+ creating map layout
+ loading custom character: harold_the_homeboy
+  loading from datafile
+    loading jump lo
+    loading jump med
+    loading jump hi
+    loading yo
+    loading wazup
+    loading falling
+    loading edge
+ cc done
+ setting up play data
+ play started
+  player quit after dying
+ play ended
+ replay_menu launched
+  play again selected
+ freeing custom data
+    destroying datafile
+    destroying jump lo
+    destroying jump med
+    destroying jump hi
+    destroying fall
+    destroying edge
+    destroying yo
+    destroying wazup
+ init new game
+ setting up for replay recording
+ creating map layout
+ loading custom character: harold_the_homeboy
+  loading from datafile
+    loading jump lo
+    loading jump med
+    loading jump hi
+    loading yo
+    loading wazup
+    loading falling
+    loading edge
+ cc done
+ setting up play data
+ play started
+  player quit after dying
+ play ended
+ replay_menu launched
+  play again selected
+ freeing custom data
+    destroying datafile
+    destroying jump lo
+    destroying jump med
+    destroying jump hi
+    destroying fall
+    destroying edge
+    destroying yo
+    destroying wazup
+ init new game
+ setting up for replay recording
+ creating map layout
+ loading custom character: harold_the_homeboy
+  loading from datafile
+    loading jump lo
+    loading jump med
+    loading jump hi
+    loading yo
+    loading wazup
+    loading falling
+    loading edge
+ cc done
+ setting up play data
+ play started
+  player quit after dying
+ play ended
+ replay_menu launched
+  play again selected
+ freeing custom data
+    destroying datafile
+    destroying jump lo
+    destroying jump med
+    destroying jump hi
+    destroying fall
+    destroying edge
+    destroying yo
+    destroying wazup
+ init new game
+ setting up for replay recording
+ creating map layout
+ loading custom character: harold_the_homeboy
+  loading from datafile
+    loading jump lo
+    loading jump med
+    loading jump hi
+    loading yo
+    loading wazup
+    loading falling
+    loading edge
+ cc done
+ setting up play data
+ play started
+  player quit after dying
+ play ended
+ player qualified for highscore
+  saving config and scores
+ replay_menu launched
+  play again selected
+ freeing custom data
+    destroying datafile
+    destroying jump lo
+    destroying jump med
+    destroying jump hi
+    destroying fall
+    destroying edge
+    destroying yo
+    destroying wazup
+ init new game
+ setting up for replay recording
+ creating map layout
+ loading custom character: harold_the_homeboy
+  loading from datafile
+    loading jump lo
+    loading jump med
+    loading jump hi
+    loading yo
+    loading wazup
+    loading falling
+    loading edge
+ cc done
+ setting up play data
+ play started
+  player quit after dying
+ play ended
  replay_menu launched
  freeing custom data
     destroying datafile
