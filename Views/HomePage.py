@@ -106,35 +106,35 @@ class MainMenuFrame(ctk.CTkFrame):
 
         # --- רשימת משחקים רגילים ---
         standard_games = [
-            {"name": "🐍 Snake Game", "script": "Snake.exe", "img_name": "Snake.png"},
-            {"name": "🔢 2048", "script": "2048.exe", "img_name": "2048.png"},
-            {"name": "❌ Tic Tac Toe", "script": "XO.exe", "img_name": "XO.png"},
-            {"name": "🤔 Guess Number", "script": "GuessNumber.exe", "img_name": "GuessNumber.png"},
-            {"name": "🐢 Turtle Control", "script": "Turtle.exe", "img_name": "Turtle.png"},
+            {"name": "🐍 Snake Game", "script": os.path.join("RegularGames", "Maze.py"), "img_name": "Snake.png"},
+            {"name": "🔢 2048", "script": os.path.join("RegularGames", "Maze.py"), "img_name": "2048.png"},
+            {"name": "❌ Tic Tac Toe", "script": os.path.join("RegularGames", "Maze.py"), "img_name": "XO.png"},
+            {"name": "🤔 Guess Number", "script": os.path.join("RegularGames", "Maze.py"), "img_name": "GuessNumber.png"},
+            {"name": "🐢 Turtle Control", "script": os.path.join("RegularGames", "Maze.py"), "img_name": "Turtle.png"},
             {"name": "🏔 Icy Tower", "script": os.path.join("icytower1.3", "icytower13.exe"), "img_name": "IcyTower.png"},
-            {"name": "Maze", "script": "Maze.exe", "img_name": "Maze.png"},
-            {"name": "⚽ Stanga", "script": "Stanga.exe", "img_name": "Stanga.png"},
+            {"name": "Maze", "script": os.path.join("RegularGames", "Maze.py"), "img_name": "Maze.png"},
+            {"name": "⚽ Stanga", "script": os.path.join("RegularGames", "Stanga.py"), "img_name": "Stanga.png"},
             {"name": "🧱 DX Ball", "script": os.path.join("DX-Ball 2", "DXBall2.exe"), "img_name": "DXBall.png"},
-            {"name": "🐦 Flabby Bird", "script": "FlabbyBird.exe", "img_name": "FlabbyBird.png"},
-            {"name": "🧠 Simon Says", "script": "SimonSays.exe", "img_name": "SimonSays.png"},
-            {"name": "🃏 Memory Game", "script": "MemoryGame.exe", "img_name": "MemoryGame.png"},
-            {"name": "🪵 Hangman", "script": "Hangman.exe", "img_name": "Hangman.png"},
-            {"name": "🟡 Pac-Man", "script": "PacMan.exe", "img_name": "PacMan.png"},
-            {"name": "🏓 Ping Pong", "script": "PingPong.exe", "img_name": "PingPong.png"}
+            {"name": "🐦 Flabby Bird", "script": os.path.join("RegularGames", "Maze.py"), "img_name": "FlabbyBird.png"},
+            {"name": "🧠 Simon Says", "script": os.path.join("RegularGames", "Maze.py"), "img_name": "SimonSays.png"},
+            {"name": "🃏 Memory Game", "script": os.path.join("RegularGames", "Maze.py"), "img_name": "MemoryGame.png"},
+            {"name": "🪵 Hangman", "script": os.path.join("RegularGames", "Maze.py"), "img_name": "Hangman.png"},
+            {"name": "🟡 Pac-Man", "script": os.path.join("RegularGames", "Maze.py"), "img_name": "PacMan.png"},
+            {"name": "🏓 Ping Pong", "script": os.path.join("RegularGames", "Maze.py"), "img_name": "PingPong.png"}
         ]
 
         # --- רשימת משחקי ג'ויסטיק ---
         joystick_games = [
-            {"name": "✈️ Flight Simulator", "script": "FlightSimulator.exe", "img_name": "FlightSimulator.png"},
-            {"name": "💥 Alpha Strike", "script": "AlphaStrike.exe", "img_name": "AlphaStrike.png"},
-            {"name": "🌌 Nebula Racing", "script": "NebulaRacing.exe", "img_name": "NebulaRacing.png"},
-            {"name": "🌊 Deep Sea Explorer", "script": "DeepSea.exe", "img_name": "DeepSea.png"},
-            {"name": "⚓ Submarine Hunt", "script": "SubmarineHunt.exe", "img_name": "SubmarineHunt.png"},
-            {"name": "🛡️ Turret Defense", "script": "TurretDefense.exe", "img_name": "TurretDefense.png"},
-            {"name": "🚀 Moon Lander", "script": "MoonLander.exe", "img_name": "MoonLander.png"},
-            {"name": "🪂 Wingsuit Pro", "script": "WingsuitPro.exe", "img_name": "WingsuitPro.png"},
-            {"name": "🕹️ Retro Arcade", "script": "RetroArcade.exe", "img_name": "RetroArcade.png"},
-            {"name": "🪐 Space Voyager", "script": "SpaceVoyager.exe", "img_name": "SpaceVoyager.png"}
+            {"name": "✈️ Flight Simulator", "script": os.path.join("JoystickGames", "FlightSimulator.py"), "img_name": "FlightSimulator.png"},
+            {"name": "💥 Alpha Strike", "script": os.path.join("JoystickGames", "Maze.py"), "img_name": "AlphaStrike.png"},
+            {"name": "🌌 Nebula Racing", "script": os.path.join("JoystickGames", "Maze.py"), "img_name": "NebulaRacing.png"},
+            {"name": "🌊 Deep Sea Explorer", "script": os.path.join("JoystickGames", "Maze.py"), "img_name": "DeepSea.png"},
+            {"name": "⚓ Submarine Hunt", "script": os.path.join("JoystickGames", "Maze.py"), "img_name": "SubmarineHunt.png"},
+            {"name": "🛡️ Turret Defense", "script": os.path.join("JoystickGames", "Maze.py"), "img_name": "TurretDefense.png"},
+            {"name": "🚀 Moon Lander", "script": os.path.join("JoystickGames", "Maze.py"), "img_name": "MoonLander.png"},
+            {"name": "🪂 Wingsuit Pro", "script": os.path.join("JoystickGames", "Maze.py"), "img_name": "WingsuitPro.png"},
+            {"name": "🕹️ Retro Arcade", "script": os.path.join("JoystickGames", "Maze.py"), "img_name": "RetroArcade.png"},
+            {"name": "🪐 Space Voyager", "script":os.path.join("JoystickGames", "Maze.py"), "img_name": "SpaceVoyager.png"}
         ]
 
         # 4. רינדור משחקים רגילים
