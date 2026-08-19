@@ -143,42 +143,47 @@ class FlightSimulatorPygame:
         # Update Rings (Targets)
         for ring in self.rings[:]:
             ring["y"] += ring["speed"]
-            if ring["y"] > SCREEN_HEIGHT - 120:
-                self.rings.remove(ring)
-                self.spawn_ring()
 
-            # Check ring fly-through collision
+            # Check collision first
             dist = math.hypot(self.plane_x - ring["x"], self.plane_y - ring["y"])
             if dist < ring["size"]:
                 self.score += 150
                 self.fuel = min(100.0, self.fuel + 10)  # Reward fuel
-                self.rings.remove(ring)
+                if ring in self.rings:
+                    self.rings.remove(ring)
                 self.spawn_ring()
                 self.spawn_fuel()
+            # If no collision, check if it fell off screen
+            elif ring["y"] > SCREEN_HEIGHT - 120:
+                if ring in self.rings:
+                    self.rings.remove(ring)
+                self.spawn_ring()
 
         # Update Clouds (Obstacles)
         for cloud in self.clouds[:]:
             cloud["y"] += cloud["speed"]
             if cloud["y"] > SCREEN_HEIGHT - 120:
-                self.clouds.remove(cloud)
+                if cloud in self.clouds:
+                    self.clouds.remove(cloud)
                 self.spawn_cloud()
-
-            # Check collision with cloud
-            dist = math.hypot(self.plane_x - cloud["x"], self.plane_y - cloud["y"])
-            if dist < cloud["radius"]:
-                self.game_over = True
-                self.game_over_reason = "CRASHED INTO A STORM CLOUD!"
+            else:
+                dist = math.hypot(self.plane_x - cloud["x"], self.plane_y - cloud["y"])
+                if dist < cloud["radius"]:
+                    self.game_over = True
+                    self.game_over_reason = "CRASHED INTO A STORM CLOUD!"
 
         # Update Fuel Canisters
         for fuel_item in self.fuel_canisters[:]:
             fuel_item["y"] += fuel_item["speed"]
-            if fuel_item["y"] > SCREEN_HEIGHT - 120:
-                self.fuel_canisters.remove(fuel_item)
 
             dist = math.hypot(self.plane_x - fuel_item["x"], self.plane_y - fuel_item["y"])
             if dist < 35:
                 self.fuel = min(100.0, self.fuel + 35)
-                self.fuel_canisters.remove(fuel_item)
+                if fuel_item in self.fuel_canisters:
+                    self.fuel_canisters.remove(fuel_item)
+            elif fuel_item["y"] > SCREEN_HEIGHT - 120:
+                if fuel_item in self.fuel_canisters:
+                    self.fuel_canisters.remove(fuel_item)
 
     def draw(self):
         # Draw sky background
