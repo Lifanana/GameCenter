@@ -62,7 +62,7 @@ class FlappyStartWindow(ctk.CTk):
         self.pipe_gap = 180
         self.should_start = False
 
-         # כפתור חזרה ל-Games Center
+        # כפתור חזרה ל-Games Center
         self.btn_back = ctk.CTkButton(
             self,
             text="⬅️ Back to Games Center",
@@ -76,9 +76,9 @@ class FlappyStartWindow(ctk.CTk):
         self.btn_back.pack(pady=30)
 
     def return_to_main_menu(self):
-         """מסמן שרוצים לחזור לתפריט הראשי וסוגר את החלון"""
-         self.back_to_games = True
-         self.destroy()
+        """מסמן שרוצים לחזור לתפריט הראשי וסוגר את החלון"""
+        self.back_to_games = True
+        self.destroy()
 
     def launch_game(self):
         self.player_name = self.name_input.get().strip() or "Player"
@@ -129,7 +129,7 @@ def run_flappy_game(player_name, pipe_gap):
             self.y += self.velocity
             
             # הגבלת נפילה/תקרה
-            if self.y < self.radius + 50: # מתחת לבר הניקוד
+            if self.y < self.radius + 50:  # מתחת לבר הניקוד
                 self.y = self.radius + 50
                 self.velocity = 0
                 
@@ -163,14 +163,14 @@ def run_flappy_game(player_name, pipe_gap):
         def draw(self):
             # צינור עליון
             pygame.draw.rect(screen, PIPE_COLOR, (self.x, 50, self.width, self.top_height - 50))
-            pygame.draw.rect(screen, (27, 120, 65), (self.x - 4, self.top_height - 25, self.width + 8, 25)) # שפת הצינור
+            pygame.draw.rect(screen, (27, 120, 65), (self.x - 4, self.top_height - 25, self.width + 8, 25))  # שפת הצינור
             
             # צינור תחתון
             pygame.draw.rect(screen, PIPE_COLOR, (self.x, self.bottom_y, self.width, HEIGHT - self.bottom_y - 50))
             pygame.draw.rect(screen, (27, 120, 65), (self.x - 4, self.bottom_y, self.width + 8, 25))
 
         def collide(self, bird):
-            # התנגשות בצינור העליון
+            # התנגשות בצינור העליון/תחתון
             if bird.x + bird.radius > self.x and bird.x - bird.radius < self.x + self.width:
                 if bird.y - bird.radius < self.top_height or bird.y + bird.radius > self.bottom_y:
                     return True
@@ -183,11 +183,13 @@ def run_flappy_game(player_name, pipe_gap):
     
     # ניקוד
     score = 0
-    game_state = "PLAYING" # "PLAYING", "GAMEOVER"
+    game_state = "PLAYING"  # "PLAYING", "GAMEOVER"
     font = pygame.font.SysFont("Arial", 22, bold=True)
     large_font = pygame.font.SysFont("Arial", 42, bold=True)
 
     running = True
+    returned_by_esc = False
+
     while running:
         clock.tick(60)
         screen.fill(SKY_BLUE)
@@ -196,24 +198,27 @@ def run_flappy_game(player_name, pipe_gap):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    return True
-                if game_state == "PLAYING":
-                    if event.type == pygame.MOUSEBUTTONDOWN or event.key == pygame.K_SPACE:
+                    returned_by_esc = True
+                    running = False
+
+                elif game_state == "PLAYING":
+                    if event.key == pygame.K_SPACE:
                         bird.flap()
-                else:
-                    # במסך סיום
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_x: # משחק מחדש
-                            bird = Bird()
-                            pipes = [Pipe(WIDTH + 100), Pipe(WIDTH + 400)]
-                            score = 0
-                            scroll_speed = 3.5
-                            game_state = "PLAYING"
-                        elif event.key == pygame.K_ESCAPE: # חזרה ל-GameCenter
-                            running = False
+
+                elif game_state == "GAMEOVER":
+                    if event.key == pygame.K_x:  # משחק מחדש
+                        bird = Bird()
+                        pipes = [Pipe(WIDTH + 100), Pipe(WIDTH + 400)]
+                        score = 0
+                        scroll_speed = 3.5
+                        game_state = "PLAYING"
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if game_state == "PLAYING":
+                    bird.flap()
 
         if game_state == "PLAYING":
             bird.update()
@@ -251,7 +256,7 @@ def run_flappy_game(player_name, pipe_gap):
 
         # ציור רצפה
         pygame.draw.rect(screen, GROUND_COLOR, (0, HEIGHT - 50, WIDTH, 50))
-        pygame.draw.rect(screen, (139, 104, 0), (0, HEIGHT - 50, WIDTH, 8)) # שפת הרצפה
+        pygame.draw.rect(screen, (139, 104, 0), (0, HEIGHT - 50, WIDTH, 8))  # שפת הרצפה
 
         # ציור הציפור
         bird.draw()
@@ -284,6 +289,7 @@ def run_flappy_game(player_name, pipe_gap):
         pygame.display.flip()
 
     pygame.quit()
+    return returned_by_esc
 
 
 # ==========================================
@@ -301,10 +307,9 @@ if __name__ == "__main__":
         # אם המשתמש לחץ על כפתור התחלת משחק
         if menu.should_start:
             # מריצים את המשחק ושומרים את הערך המוחזר (True ל-ESC, False ליציאה)
-            should_return_to_menu =  run_flappy_game(menu.player_name, menu.pipe_gap)
+            should_return_to_menu = run_flappy_game(menu.player_name, menu.pipe_gap)
             # אם לא לחצו ESC (למשל סגרו את החלון ב-X), נצא מהלולאה
             if not should_return_to_menu:
                 break
-            # אם לחצו ESC, הלולאה תמשיך ותפתח שוב את חלון ה-MemoryStartWindow
         else:
             break

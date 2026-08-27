@@ -24,9 +24,13 @@ GOLD = (234, 179, 8)
 CLOUD_GRAY = (203, 213, 225)
 FUEL_GREEN = (34, 197, 94)
 
+# Status Colors
+GREEN_ONLINE = (34, 197, 94)
+RED_OFFLINE = (239, 68, 68)
+
 
 class FlightSimulatorPygame:
-    """Core Flight Simulator Game Engine using Pygame"""
+    """Core Flight Simulator Game Engine using Pygame with Dynamic Joystick Indicator"""
     def __init__(self, parent_launcher):
         self.launcher = parent_launcher
 
@@ -36,21 +40,22 @@ class FlightSimulatorPygame:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Flight Simulator Pro")
         self.clock = pygame.time.Clock()
+        
+        # Fonts
         self.font = pygame.font.SysFont("Arial", 22, bold=True)
+        self.small_font = pygame.font.SysFont("Arial", 14, bold=True)  # פתרון השגיאה: הוספת פונט קטן לאינדיקטור
         self.big_font = pygame.font.SysFont("Arial", 46, bold=True)
 
-        # Joystick initialization
+        # Joystick setup
         self.joystick = None
-        if pygame.joystick.get_count() > 0:
-            self.joystick = pygame.joystick.Joystick(0)
-            self.joystick.init()
+        self.check_joystick()
 
         # Aircraft parameters
         self.plane_x = SCREEN_WIDTH // 2
         self.plane_y = SCREEN_HEIGHT // 2
         self.pitch = 0
         self.roll = 0
-        self.fuel = 100.0  # Fuel bar (decreases over time)
+        self.fuel = 100.0  # Fuel bar
         self.score = 0
         self.game_over = False
         self.game_over_reason = ""
@@ -65,6 +70,17 @@ class FlightSimulatorPygame:
             self.spawn_ring()
         for _ in range(4):
             self.spawn_cloud()
+
+    def check_joystick(self):
+        """Dynamic runtime check for joystick connection state"""
+        pygame.joystick.init()
+        count = pygame.joystick.get_count()
+        if count > 0:
+            if not self.joystick:
+                self.joystick = pygame.joystick.Joystick(0)
+                self.joystick.init()
+        else:
+            self.joystick = None
 
     def spawn_ring(self):
         """Spawns a target ring"""
@@ -99,6 +115,9 @@ class FlightSimulatorPygame:
             if keys[pygame.K_r]:
                 self.__init__(self.launcher)
             return
+
+        # Check for joystick insertion/removal on every frame
+        self.check_joystick()
 
         axis_roll = 0.0
         axis_pitch = 0.0
@@ -143,42 +162,45 @@ class FlightSimulatorPygame:
         # Update Rings (Targets)
         for ring in self.rings[:]:
             ring["y"] += ring["speed"]
-            if ring["y"] > SCREEN_HEIGHT - 120:
-                self.rings.remove(ring)
-                self.spawn_ring()
 
-            # Check ring fly-through collision
             dist = math.hypot(self.plane_x - ring["x"], self.plane_y - ring["y"])
             if dist < ring["size"]:
                 self.score += 150
-                self.fuel = min(100.0, self.fuel + 10)  # Reward fuel
-                self.rings.remove(ring)
+                self.fuel = min(100.0, self.fuel + 10)
+                if ring in self.rings:
+                    self.rings.remove(ring)
                 self.spawn_ring()
                 self.spawn_fuel()
+            elif ring["y"] > SCREEN_HEIGHT - 120:
+                if ring in self.rings:
+                    self.rings.remove(ring)
+                self.spawn_ring()
 
         # Update Clouds (Obstacles)
         for cloud in self.clouds[:]:
             cloud["y"] += cloud["speed"]
             if cloud["y"] > SCREEN_HEIGHT - 120:
-                self.clouds.remove(cloud)
+                if cloud in self.clouds:
+                    self.clouds.remove(cloud)
                 self.spawn_cloud()
-
-            # Check collision with cloud
-            dist = math.hypot(self.plane_x - cloud["x"], self.plane_y - cloud["y"])
-            if dist < cloud["radius"]:
-                self.game_over = True
-                self.game_over_reason = "CRASHED INTO A STORM CLOUD!"
+            else:
+                dist = math.hypot(self.plane_x - cloud["x"], self.plane_y - cloud["y"])
+                if dist < cloud["radius"]:
+                    self.game_over = True
+                    self.game_over_reason = "CRASHED INTO A STORM CLOUD!"
 
         # Update Fuel Canisters
         for fuel_item in self.fuel_canisters[:]:
             fuel_item["y"] += fuel_item["speed"]
-            if fuel_item["y"] > SCREEN_HEIGHT - 120:
-                self.fuel_canisters.remove(fuel_item)
 
             dist = math.hypot(self.plane_x - fuel_item["x"], self.plane_y - fuel_item["y"])
             if dist < 35:
                 self.fuel = min(100.0, self.fuel + 35)
-                self.fuel_canisters.remove(fuel_item)
+                if fuel_item in self.fuel_canisters:
+                    self.fuel_canisters.remove(fuel_item)
+            elif fuel_item["y"] > SCREEN_HEIGHT - 120:
+                if fuel_item in self.fuel_canisters:
+                    self.fuel_canisters.remove(fuel_item)
 
     def draw(self):
         # Draw sky background
@@ -210,7 +232,7 @@ class FlightSimulatorPygame:
                          (self.plane_x - wing_offset_x, self.plane_y - wing_offset_y), 
                          (self.plane_x + wing_offset_x, self.plane_y + wing_offset_y), 6)
 
-        # 5. Draw Heads-Up Display (HUD)
+        # 5. Draw Heads-Up Display (HUD) Left
         score_txt = self.font.render(f"Score: {self.score}", True, DARK_SKY)
         self.screen.blit(score_txt, (20, 20))
 
@@ -223,6 +245,26 @@ class FlightSimulatorPygame:
         
         fuel_txt = self.font.render("FUEL", True, WHITE)
         self.screen.blit(fuel_txt, (230, 53))
+
+        # -------------------------------------------------------------
+        # 6. TOP RIGHT IN-GAME JOYSTICK INDICATOR
+        # -------------------------------------------------------------
+        indicator_x = SCREEN_WIDTH - 210
+        indicator_y = 20
+
+        # Background badge
+        pygame.draw.rect(self.screen, (15, 23, 42), (indicator_x, indicator_y, 190, 36), border_radius=18)
+
+        if self.joystick:
+            # Online state
+            pygame.draw.circle(self.screen, GREEN_ONLINE, (indicator_x + 20, indicator_y + 18), 7)
+            status_txt = self.small_font.render("JOYSTICK ONLINE", True, GREEN_ONLINE)
+        else:
+            # Offline / Keyboard state
+            pygame.draw.circle(self.screen, RED_OFFLINE, (indicator_x + 20, indicator_y + 18), 7)
+            status_txt = self.small_font.render("KEYBOARD MODE", True, RED_OFFLINE)
+        
+        self.screen.blit(status_txt, (indicator_x + 35, indicator_y + 9))
 
         # Game Over Screen
         if self.game_over:
@@ -255,7 +297,7 @@ class FlightSimulatorLauncher(ctk.CTk):
         super().__init__()
 
         self.title("JoysticGames - Flight Simulator Launcher")
-        self.geometry("550x550")
+        self.geometry("550x580")
         self.resizable(False, False)
 
         # Main Title
@@ -265,7 +307,22 @@ class FlightSimulatorLauncher(ctk.CTk):
             font=ctk.CTkFont(size=32, weight="bold"),
             text_color="#38bdf8"
         )
-        self.title_label.pack(pady=(30, 10))
+        self.title_label.pack(pady=(25, 5))
+
+        # -------------------------------------------------------------
+        # LAUNCHER JOYSTICK STATUS INDICATOR
+        # -------------------------------------------------------------
+        self.status_frame = ctk.CTkFrame(self, fg_color="#0F172A", corner_radius=20)
+        self.status_frame.pack(pady=8)
+        
+        self.status_label = ctk.CTkLabel(
+            self.status_frame,
+            text="",
+            font=ctk.CTkFont(size=13, weight="bold"),
+            padx=15,
+            pady=4
+        )
+        self.status_label.pack()
 
         # Description
         self.desc_label = ctk.CTkLabel(
@@ -278,7 +335,7 @@ class FlightSimulatorLauncher(ctk.CTk):
 
         # Controls Panel
         self.info_frame = ctk.CTkFrame(self, fg_color="#1E1E1E", corner_radius=10)
-        self.info_frame.pack(padx=40, pady=15, fill="x")
+        self.info_frame.pack(padx=40, pady=10, fill="x")
 
         instructions = (
             "🎮 Flight Controls:\n"
@@ -318,6 +375,29 @@ class FlightSimulatorLauncher(ctk.CTk):
             command=self.return_to_gamecenter
         )
         self.exit_button.pack(pady=5, padx=50, fill="x")
+
+        # Start listening for joystick connection updates in launcher
+        self.update_joystick_status()
+        
+    def update_joystick_status(self):
+        """Continuously polls joystick status in the GUI launcher window"""
+        pygame.joystick.init()
+        if pygame.joystick.get_count() > 0:
+            js = pygame.joystick.Joystick(0)
+            js.init()
+            name = js.get_name()
+            self.status_label.configure(
+                text=f"🟢 JOYSTICK CONNECTED: {name}",
+                text_color="#22c55e"
+            )
+        else:
+            self.status_label.configure(
+                text="🔴 NO JOYSTICK DETECTED (KEYBOARD FALLBACK)",
+                text_color="#ef4444"
+            )
+        
+        # Poll state every 1000ms
+        self.after(1000, self.update_joystick_status)
 
     def start_game(self):
         self.withdraw()

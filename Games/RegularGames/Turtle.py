@@ -2,6 +2,7 @@ import customtkinter as ctk
 import turtle
 import random
 import sys
+import _tkinter  # <--- הוספנו את הייבוא הזה כדי לפתור את השגיאה בשורה 144
 
 # הגדרת עיצוב כללי ל-customtkinter
 ctk.set_appearance_mode("dark")
@@ -59,7 +60,7 @@ class TurtleMenuApp(ctk.CTk):
             width=150,
             height=40,
             corner_radius=10,
-             command=self.return_to_main_menu
+            command=self.return_to_main_menu
         )
         self.btn_exit.pack(pady=(40, 10))
 
@@ -68,8 +69,8 @@ class TurtleMenuApp(ctk.CTk):
         self.destroy()
 
     def return_to_main_menu(self):
-        """מסמן שרוצים לחזור לתפריט הראשי וסוגר את החלון"""
-        self.back_to_games = True
+        """סוגר את החלון ויוצא מהמשחק בחזרה ל-GameCenter"""
+        self.start_game_chosen = False
         self.destroy()
 
 

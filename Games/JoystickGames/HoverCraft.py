@@ -22,6 +22,10 @@ BASE_COLOR = (34, 197, 94)         # Safety green
 TEXT_COLOR = (241, 245, 249)
 GOLD_ACCENT = (250, 204, 21)
 
+# Status Colors
+GREEN_ONLINE = (34, 197, 94)
+RED_OFFLINE = (239, 68, 68)
+
 
 class Survivor:
     def __init__(self, x, y):
@@ -31,7 +35,7 @@ class Survivor:
 
 
 class DirectionalHovercraftPygame:
-    """Hovercraft Rescue Engine with Direct 4-Directional Movement"""
+    """Hovercraft Rescue Engine with Live Joystick Status Indicator"""
     def __init__(self, parent_launcher):
         self.launcher = parent_launcher
 
@@ -42,13 +46,12 @@ class DirectionalHovercraftPygame:
         pygame.display.set_caption("Hovercraft Rescue - Directional Night Search")
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont("Arial", 22, bold=True)
+        self.small_font = pygame.font.SysFont("Arial", 14, bold=True)
         self.big_font = pygame.font.SysFont("Arial", 38, bold=True)
 
         # Joystick setup
         self.joystick = None
-        if pygame.joystick.get_count() > 0:
-            self.joystick = pygame.joystick.Joystick(0)
-            self.joystick.init()
+        self.check_joystick()
 
         # Hovercraft parameters
         self.x = 110.0
@@ -65,12 +68,26 @@ class DirectionalHovercraftPygame:
 
         self.won = False
 
+    def check_joystick(self):
+        """Dynamic runtime check for joystick connection state"""
+        pygame.joystick.init()
+        count = pygame.joystick.get_count()
+        if count > 0:
+            if not self.joystick:
+                self.joystick = pygame.joystick.Joystick(0)
+                self.joystick.init()
+        else:
+            self.joystick = None
+
     def handle_input(self):
         if self.won:
             keys = pygame.key.get_pressed()
             if keys[pygame.K_r]:
                 self.__init__(self.launcher)
             return
+
+        # Check connection state on each frame
+        self.check_joystick()
 
         move_x = 0.0
         move_y = 0.0
@@ -101,17 +118,14 @@ class DirectionalHovercraftPygame:
 
         # Direct 4-Directional Movement Logic
         if move_x != 0 or move_y != 0:
-            # Calculate target movement angle
             angle_rad = math.atan2(move_y, move_x)
             self.heading_angle = math.degrees(-angle_rad)
 
-            # Normalize diagonal speed
             magnitude = math.hypot(move_x, move_y)
             if magnitude > 1.0:
                 move_x /= magnitude
                 move_y /= magnitude
 
-            # Position update
             self.x += move_x * self.speed
             self.y += move_y * self.speed
 
@@ -162,14 +176,13 @@ class DirectionalHovercraftPygame:
         pygame.draw.polygon(spot_surface, (254, 240, 138, 65), [p1, p2, p3])
         self.screen.blit(spot_surface, (0, 0))
 
-        # 3. Survivors Visibility (Rendered if inside spotlight cone or near craft)
+        # 3. Survivors Visibility
         for s in self.survivors:
             if not s.rescued:
                 dist = math.hypot(s.x - self.x, s.y - self.y)
                 angle_to_s = math.degrees(math.atan2(-(s.y - self.y), s.x - self.x))
                 angle_diff = (angle_to_s - total_spotlight_deg + 180) % 360 - 180
 
-                # Render survivor if illuminated
                 if dist < 85 or (dist < cone_length and abs(angle_diff) < 24):
                     pygame.draw.circle(self.screen, SURVIVOR_COLOR, (int(s.x), int(s.y)), 7)
                     pygame.draw.circle(self.screen, (255, 255, 255), (int(s.x), int(s.y)), 9, 1)
@@ -184,12 +197,32 @@ class DirectionalHovercraftPygame:
         rect = rotated_hover.get_rect(center=(int(self.x), int(self.y)))
         self.screen.blit(rotated_hover, rect.topleft)
 
-        # 5. HUD Dashboard
+        # 5. HUD Dashboard Left
         hud_onboard = self.font.render(f"Onboard: {self.onboard_survivors}/3", True, TEXT_COLOR)
         hud_saved = self.font.render(f"Saved: {self.saved_survivors}/{len(self.survivors)}", True, BASE_COLOR)
 
         self.screen.blit(hud_onboard, (20, SCREEN_HEIGHT - 65))
         self.screen.blit(hud_saved, (20, SCREEN_HEIGHT - 35))
+
+        # -------------------------------------------------------------
+        # 6. TOP RIGHT IN-GAME JOYSTICK INDICATOR
+        # -------------------------------------------------------------
+        indicator_x = SCREEN_WIDTH - 210
+        indicator_y = 20
+
+        # Background badge
+        pygame.draw.rect(self.screen, (30, 41, 59), (indicator_x, indicator_y, 190, 36), border_radius=18)
+
+        if self.joystick:
+            # Online state
+            pygame.draw.circle(self.screen, GREEN_ONLINE, (indicator_x + 20, indicator_y + 18), 7)
+            status_txt = self.small_font.render("JOYSTICK ONLINE", True, GREEN_ONLINE)
+        else:
+            # Offline / Keyboard state
+            pygame.draw.circle(self.screen, RED_OFFLINE, (indicator_x + 20, indicator_y + 18), 7)
+            status_txt = self.small_font.render("KEYBOARD MODE", True, RED_OFFLINE)
+
+        self.screen.blit(status_txt, (indicator_x + 35, indicator_y + 9))
 
         # Victory Message
         if self.won:
@@ -223,7 +256,7 @@ class HovercraftLauncher(ctk.CTk):
         super().__init__()
 
         self.title("JoysticGames - Hovercraft Rescue Launcher")
-        self.geometry("550x550")
+        self.geometry("550x580")
         self.resizable(False, False)
 
         # Title
@@ -233,7 +266,22 @@ class HovercraftLauncher(ctk.CTk):
             font=ctk.CTkFont(size=30, weight="bold"),
             text_color="#f59e0b"
         )
-        self.title_label.pack(pady=(30, 10))
+        self.title_label.pack(pady=(25, 5))
+
+        # -------------------------------------------------------------
+        # LAUNCHER JOYSTICK STATUS INDICATOR
+        # -------------------------------------------------------------
+        self.status_frame = ctk.CTkFrame(self, fg_color="#1E293B", corner_radius=20)
+        self.status_frame.pack(pady=8)
+
+        self.status_label = ctk.CTkLabel(
+            self.status_frame,
+            text="",
+            font=ctk.CTkFont(size=13, weight="bold"),
+            padx=15,
+            pady=4
+        )
+        self.status_label.pack()
 
         # Description
         self.desc_label = ctk.CTkLabel(
@@ -246,7 +294,7 @@ class HovercraftLauncher(ctk.CTk):
 
         # Instructions Box
         self.info_frame = ctk.CTkFrame(self, fg_color="#1E293B", corner_radius=10)
-        self.info_frame.pack(padx=40, pady=15, fill="x")
+        self.info_frame.pack(padx=40, pady=10, fill="x")
 
         instructions = (
             "🎮 Game Controls & Rules:\n"
@@ -287,6 +335,29 @@ class HovercraftLauncher(ctk.CTk):
             command=self.return_to_gamecenter
         )
         self.exit_button.pack(pady=5, padx=50, fill="x")
+
+        # Start polling joystick status in launcher
+        self.update_joystick_status()
+
+    def update_joystick_status(self):
+        """Continuously polls joystick status in the GUI launcher window"""
+        pygame.joystick.init()
+        if pygame.joystick.get_count() > 0:
+            js = pygame.joystick.Joystick(0)
+            js.init()
+            name = js.get_name()
+            self.status_label.configure(
+                text=f"🟢 JOYSTICK CONNECTED: {name}",
+                text_color="#22c55e"
+            )
+        else:
+            self.status_label.configure(
+                text="🔴 NO JOYSTICK DETECTED (KEYBOARD FALLBACK)",
+                text_color="#ef4444"
+            )
+
+        # Poll state every 1000ms
+        self.after(1000, self.update_joystick_status)
 
     def start_game(self):
         self.withdraw()
