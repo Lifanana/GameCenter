@@ -22,9 +22,13 @@ COIN_COLOR = (234, 179, 8)      # Gold
 NITRO_COLOR = (168, 85, 247)    # Purple
 GRASS_COLOR = (15, 23, 42)
 
+# Status Colors
+GREEN_ONLINE = (34, 197, 94)
+RED_OFFLINE = (239, 68, 68)
+
 
 class CyberpunkDriftGame:
-    """Arcade Racing Game optimized for Joystick Control"""
+    """Arcade Racing Game with Real-time Joystick Status Indicator"""
     def __init__(self, parent_launcher):
         self.launcher = parent_launcher
 
@@ -35,13 +39,12 @@ class CyberpunkDriftGame:
         pygame.display.set_caption("Cyberpunk Drift: Night City")
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont("Arial", 22, bold=True)
+        self.small_font = pygame.font.SysFont("Arial", 16, bold=True)
         self.big_font = pygame.font.SysFont("Arial", 44, bold=True)
 
         # Joystick Setup
         self.joystick = None
-        if pygame.joystick.get_count() > 0:
-            self.joystick = pygame.joystick.Joystick(0)
-            self.joystick.init()
+        self.check_joystick()
 
         # Car Dynamics
         self.car_x = SCREEN_WIDTH // 2
@@ -72,6 +75,17 @@ class CyberpunkDriftGame:
         for _ in range(4):
             self.spawn_coin()
 
+    def check_joystick(self):
+        """Dynamic runtime check for joystick connection state"""
+        pygame.joystick.init()
+        count = pygame.joystick.get_count()
+        if count > 0:
+            if not self.joystick:
+                self.joystick = pygame.joystick.Joystick(0)
+                self.joystick.init()
+        else:
+            self.joystick = None
+
     def spawn_traffic(self):
         lanes = [280, 390, 500, 610]
         self.traffic.append({
@@ -93,6 +107,9 @@ class CyberpunkDriftGame:
             if keys[pygame.K_r]:
                 self.__init__(self.launcher)
             return
+
+        # Check connection on each frame
+        self.check_joystick()
 
         steer = 0.0
         throttle = False
@@ -146,7 +163,7 @@ class CyberpunkDriftGame:
 
         # Keep on Track Boundary
         if self.car_x < 210 or self.car_x > 670:
-            self.car_speed *= 0.92  # Grass friction slowdown
+            self.car_speed *= 0.92
             if self.car_x < 190: self.car_x = 190
             if self.car_x > 690: self.car_x = 690
 
@@ -154,7 +171,6 @@ class CyberpunkDriftGame:
         if self.game_over:
             return
 
-        # Distance & Score
         self.distance += int(self.car_speed)
         self.road_offset = (self.road_offset + self.car_speed) % 80
 
@@ -164,13 +180,11 @@ class CyberpunkDriftGame:
         for car in self.traffic[:]:
             car["y"] += self.car_speed - car["speed"]
 
-            # Respawn if off screen
             if car["y"] > SCREEN_HEIGHT + 100 or car["y"] < -600:
                 if car in self.traffic:
                     self.traffic.remove(car)
                 self.spawn_traffic()
 
-            # Collision Check
             traffic_rect = pygame.Rect(car["x"] - 20, car["y"] - 35, 40, 70)
             if car_rect.colliderect(traffic_rect):
                 self.game_over = True
@@ -214,26 +228,22 @@ class CyberpunkDriftGame:
         for car in self.traffic:
             cx, cy = int(car["x"]), int(car["y"])
             pygame.draw.rect(self.screen, TRAFFIC_COLOR, (cx - 20, cy - 35, 40, 70), border_radius=6)
-            # Taillights
             pygame.draw.rect(self.screen, (255, 255, 255), (cx - 16, cy + 28, 8, 5))
             pygame.draw.rect(self.screen, (255, 255, 255), (cx + 8, cy + 28, 8, 5))
 
         # 5. Player Sports Car
         px, py = int(self.car_x), int(self.car_y)
 
-        # Nitro Flame effect
         if self.is_nitro_active and self.car_speed > 2:
             flame_h = random.randint(25, 45)
             pygame.draw.polygon(self.screen, NITRO_COLOR, [
                 (px - 10, py + 35), (px + 10, py + 35), (px, py + 35 + flame_h)
             ])
 
-        # Body
         pygame.draw.rect(self.screen, PLAYER_COLOR, (px - 20, py - 35, 40, 70), border_radius=8)
-        # Windshield
         pygame.draw.rect(self.screen, (15, 23, 42), (px - 14, py - 15, 28, 20), border_radius=3)
 
-        # 6. Dashboard HUD
+        # 6. Dashboard HUD Left
         txt_score = self.font.render(f"Score: {self.score}", True, COIN_COLOR)
         txt_speed = self.font.render(f"Speed: {int(self.car_speed * 18)} km/h", True, (255, 255, 255))
         self.screen.blit(txt_score, (20, 20))
@@ -246,6 +256,26 @@ class CyberpunkDriftGame:
             pygame.draw.rect(self.screen, NITRO_COLOR, (22, 92, nitro_w, 12), border_radius=3)
         txt_nitro = self.font.render("NITRO", True, NITRO_COLOR)
         self.screen.blit(txt_nitro, (190, 86))
+
+        # -------------------------------------------------------------
+        # 7. TOP RIGHT IN-GAME JOYSTICK INDICATOR
+        # -------------------------------------------------------------
+        indicator_x = SCREEN_WIDTH - 210
+        indicator_y = 20
+
+        # Background badge
+        pygame.draw.rect(self.screen, (15, 23, 42), (indicator_x, indicator_y, 190, 36), border_radius=18)
+        
+        if self.joystick:
+            # Online state
+            pygame.draw.circle(self.screen, GREEN_ONLINE, (indicator_x + 20, indicator_y + 18), 7)
+            status_txt = self.small_font.render("JOYSTICK ONLINE", True, GREEN_ONLINE)
+        else:
+            # Offline / Keyboard state
+            pygame.draw.circle(self.screen, RED_OFFLINE, (indicator_x + 20, indicator_y + 18), 7)
+            status_txt = self.small_font.render("KEYBOARD MODE", True, RED_OFFLINE)
+
+        self.screen.blit(status_txt, (indicator_x + 35, indicator_y + 9))
 
         # Game Over Screen
         if self.game_over:
@@ -277,8 +307,11 @@ class DriftLauncher(ctk.CTk):
     def __init__(self):
         super().__init__()
 
+        pygame.init()
+        pygame.joystick.init()
+
         self.title("JoysticGames - Cyberpunk Drift Launcher")
-        self.geometry("550x530")
+        self.geometry("550x580")
         self.resizable(False, False)
 
         # Title
@@ -288,7 +321,22 @@ class DriftLauncher(ctk.CTk):
             font=ctk.CTkFont(size=30, weight="bold"),
             text_color="#06b6d4"
         )
-        self.title_label.pack(pady=(30, 10))
+        self.title_label.pack(pady=(25, 5))
+
+        # -------------------------------------------------------------
+        # LAUNCHER JOYSTICK STATUS INDICATOR
+        # -------------------------------------------------------------
+        self.status_frame = ctk.CTkFrame(self, fg_color="#0F172A", corner_radius=20)
+        self.status_frame.pack(pady=8)
+
+        self.status_label = ctk.CTkLabel(
+            self.status_frame,
+            text="",
+            font=ctk.CTkFont(size=13, weight="bold"),
+            padx=15,
+            pady=4
+        )
+        self.status_label.pack()
 
         # Description
         self.desc_label = ctk.CTkLabel(
@@ -301,7 +349,7 @@ class DriftLauncher(ctk.CTk):
 
         # Instructions Box
         self.info_frame = ctk.CTkFrame(self, fg_color="#0F172A", corner_radius=10)
-        self.info_frame.pack(padx=40, pady=15, fill="x")
+        self.info_frame.pack(padx=40, pady=10, fill="x")
 
         instructions = (
             "🎮 Controls:\n"
@@ -342,6 +390,29 @@ class DriftLauncher(ctk.CTk):
             command=self.return_to_gamecenter
         )
         self.exit_button.pack(pady=5, padx=50, fill="x")
+
+        # Start listening for joystick connection updates in launcher
+        self.update_joystick_status()
+
+    def update_joystick_status(self):
+        """Continuously polls joystick status in the GUI launcher window"""
+        pygame.joystick.init()
+        if pygame.joystick.get_count() > 0:
+            js = pygame.joystick.Joystick(0)
+            js.init()
+            name = js.get_name()
+            self.status_label.configure(
+                text=f"🟢 JOYSTICK CONNECTED: {name}",
+                text_color="#22c55e"
+            )
+        else:
+            self.status_label.configure(
+                text="🔴 NO JOYSTICK DETECTED (KEYBOARD FALLBACK)",
+                text_color="#ef4444"
+            )
+        
+        # Poll state every 1000ms
+        self.after(1000, self.update_joystick_status)
 
     def start_game(self):
         self.withdraw()

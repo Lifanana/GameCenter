@@ -24,9 +24,13 @@ HOLE_COLOR = (2, 6, 23)         # Pit holes
 TEXT_COLOR = (241, 245, 249)
 RED_ACCENT = (239, 68, 68)
 
+# Status Colors
+GREEN_ONLINE = (34, 197, 94)
+RED_OFFLINE = (239, 68, 68)
+
 
 class BalanceMazePygame:
-    """Core Physics Engine and Maze Renderer using Pygame"""
+    """Core Physics Engine and Maze Renderer using Pygame with Live Joystick Indicator"""
     def __init__(self, parent_launcher):
         self.launcher = parent_launcher
 
@@ -37,13 +41,12 @@ class BalanceMazePygame:
         pygame.display.set_caption("Balance & Maze Pro - Precision Physics")
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont("Arial", 22, bold=True)
+        self.small_font = pygame.font.SysFont("Arial", 14, bold=True)
         self.big_font = pygame.font.SysFont("Arial", 42, bold=True)
 
         # Joystick initialization
         self.joystick = None
-        if pygame.joystick.get_count() > 0:
-            self.joystick = pygame.joystick.Joystick(0)
-            self.joystick.init()
+        self.check_joystick()
 
         # Physics variables
         self.tilt_x = 0.0
@@ -92,12 +95,26 @@ class BalanceMazePygame:
         # Goal Zone
         self.goal = pygame.Rect(780, 480, 70, 70)
 
+    def check_joystick(self):
+        """Dynamic runtime check for joystick connection state"""
+        pygame.joystick.init()
+        count = pygame.joystick.get_count()
+        if count > 0:
+            if not self.joystick:
+                self.joystick = pygame.joystick.Joystick(0)
+                self.joystick.init()
+        else:
+            self.joystick = None
+
     def handle_input(self):
         if self.game_over or self.won:
             keys = pygame.key.get_pressed()
             if keys[pygame.K_r]:
                 self.__init__(self.launcher)
             return
+
+        # Check connection state on each frame
+        self.check_joystick()
 
         if self.joystick:
             axis_x = self.joystick.get_axis(0)
@@ -199,7 +216,25 @@ class BalanceMazePygame:
 
         time_color = RED_ACCENT if self.time_left < 10 else TEXT_COLOR
         time_str = f"Time Remaining: {self.time_left:.1f}s"
-        self.screen.blit(self.font.render(time_str, True, time_color), (SCREEN_WIDTH - 250, 20))
+        self.screen.blit(self.font.render(time_str, True, time_color), (20, 50))
+
+        # -------------------------------------------------------------
+        # TOP RIGHT IN-GAME JOYSTICK INDICATOR
+        # -------------------------------------------------------------
+        indicator_x = SCREEN_WIDTH - 210
+        indicator_y = 20
+
+        # Background badge
+        pygame.draw.rect(self.screen, (30, 41, 59), (indicator_x, indicator_y, 190, 36), border_radius=18)
+
+        if self.joystick:
+            pygame.draw.circle(self.screen, GREEN_ONLINE, (indicator_x + 20, indicator_y + 18), 7)
+            status_txt = self.small_font.render("JOYSTICK ONLINE", True, GREEN_ONLINE)
+        else:
+            pygame.draw.circle(self.screen, RED_OFFLINE, (indicator_x + 20, indicator_y + 18), 7)
+            status_txt = self.small_font.render("KEYBOARD MODE", True, RED_OFFLINE)
+
+        self.screen.blit(status_txt, (indicator_x + 35, indicator_y + 9))
 
         # Win / Loss Messaging Overlays
         if self.won:
@@ -239,7 +274,7 @@ class BalanceMazeLauncher(ctk.CTk):
         super().__init__()
 
         self.title("JoysticGames - Balance & Maze Launcher")
-        self.geometry("550x550")
+        self.geometry("550x580")
         self.resizable(False, False)
 
         # Main Title
@@ -249,7 +284,22 @@ class BalanceMazeLauncher(ctk.CTk):
             font=ctk.CTkFont(size=32, weight="bold"),
             text_color="#60a5fa"
         )
-        self.title_label.pack(pady=(30, 10))
+        self.title_label.pack(pady=(25, 5))
+
+        # -------------------------------------------------------------
+        # LAUNCHER JOYSTICK STATUS INDICATOR
+        # -------------------------------------------------------------
+        self.status_frame = ctk.CTkFrame(self, fg_color="#1E293B", corner_radius=20)
+        self.status_frame.pack(pady=8)
+
+        self.status_label = ctk.CTkLabel(
+            self.status_frame,
+            text="",
+            font=ctk.CTkFont(size=13, weight="bold"),
+            padx=15,
+            pady=4
+        )
+        self.status_label.pack()
 
         # Subtitle Description
         self.desc_label = ctk.CTkLabel(
@@ -261,8 +311,8 @@ class BalanceMazeLauncher(ctk.CTk):
         self.desc_label.pack(pady=10)
 
         # Instructions Frame
-        self.info_frame = ctk.CTkFrame(self, fg_color="#1E293B", corner_radius=10)
-        self.info_frame.pack(padx=40, pady=15, fill="x")
+        self.info_frame = ctk.CTkFrame(self, fg_color="#1E1E1E", corner_radius=10)
+        self.info_frame.pack(padx=40, pady=10, fill="x")
 
         instructions = (
             "🎮 Game Controls & Objectives:\n"
@@ -302,6 +352,29 @@ class BalanceMazeLauncher(ctk.CTk):
             command=self.return_to_gamecenter
         )
         self.exit_button.pack(pady=5, padx=50, fill="x")
+
+        # Start polling joystick status in launcher
+        self.update_joystick_status()
+
+    def update_joystick_status(self):
+        """Continuously polls joystick status in the GUI launcher window"""
+        pygame.joystick.init()
+        if pygame.joystick.get_count() > 0:
+            js = pygame.joystick.Joystick(0)
+            js.init()
+            name = js.get_name()
+            self.status_label.configure(
+                text=f"🟢 JOYSTICK CONNECTED: {name}",
+                text_color="#22c55e"
+            )
+        else:
+            self.status_label.configure(
+                text="🔴 NO JOYSTICK DETECTED (KEYBOARD FALLBACK)",
+                text_color="#ef4444"
+            )
+
+        # Poll state every 1000ms
+        self.after(1000, self.update_joystick_status)
 
     def start_game(self):
         self.withdraw()

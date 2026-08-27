@@ -21,9 +21,13 @@ BOX_COLOR = (239, 68, 68)       # Red
 BASE_ZONE_COLOR = (34, 197, 94) # Green
 TEXT_COLOR = (241, 245, 249)
 
+# Status Colors
+GREEN_ONLINE = (34, 197, 94)
+RED_OFFLINE = (239, 68, 68)
+
 
 class CargoStackerPygame:
-    """Pygame Game Loop Class"""
+    """Pygame Game Loop Class with Live Joystick Indicator"""
     def __init__(self, parent_launcher):
         self.launcher = parent_launcher
         
@@ -34,15 +38,14 @@ class CargoStackerPygame:
         pygame.display.set_caption("Robotic Arm - Cargo Stacker")
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont("Arial", 22, bold=True)
+        self.small_font = pygame.font.SysFont("Arial", 14, bold=True)
         self.big_font = pygame.font.SysFont("Arial", 48, bold=True)
 
         # Joystick initialization
         self.joystick = None
-        if pygame.joystick.get_count() > 0:
-            self.joystick = pygame.joystick.Joystick(0)
-            self.joystick.init()
+        self.check_joystick()
 
-        # Arm parameters (increased lengths and centered positions for easier reach)
+        # Arm parameters
         self.base_x = 350
         self.base_y = SCREEN_HEIGHT - 100
         self.length1 = 220
@@ -57,7 +60,7 @@ class CargoStackerPygame:
         self.gripper_open = True
         self.box_size = 40
         
-        # Target drop zone base (moved closer to the robotic arm)
+        # Target drop zone base
         self.drop_zone = pygame.Rect(600, SCREEN_HEIGHT - 110, 140, 10)
         
         # Game Management
@@ -66,6 +69,17 @@ class CargoStackerPygame:
 
         self.score = 0
         self.game_over = False
+
+    def check_joystick(self):
+        """Dynamic runtime check for joystick connection state"""
+        pygame.joystick.init()
+        count = pygame.joystick.get_count()
+        if count > 0:
+            if not self.joystick:
+                self.joystick = pygame.joystick.Joystick(0)
+                self.joystick.init()
+        else:
+            self.joystick = None
 
     def reset_new_box(self):
         """Spawns a new box at the pick-up station"""
@@ -92,6 +106,9 @@ class CargoStackerPygame:
             if keys[pygame.K_r]:
                 self.__init__(self.launcher)
             return
+
+        # Check connection state on each frame
+        self.check_joystick()
 
         speed = 0.03
         if self.joystick:
@@ -211,11 +228,29 @@ class CargoStackerPygame:
         curr_rect = pygame.Rect(self.current_box['x'] - self.box_size // 2, self.current_box['y'] - self.box_size // 2, self.box_size, self.box_size)
         pygame.draw.rect(self.screen, BOX_COLOR, curr_rect, border_radius=4)
 
-        # HUD / Text
+        # HUD Left
         score_txt = f"Tower Height: {self.score} Boxes"
         ctrl_txt = "Controls: Stick X (Shoulder) | Stick Y (Elbow) | Trigger/Space (Grip)"
         self.screen.blit(self.font.render(score_txt, True, TEXT_COLOR), (20, 20))
         self.screen.blit(self.font.render(ctrl_txt, True, (148, 163, 184)), (20, 50))
+
+        # -------------------------------------------------------------
+        # TOP RIGHT IN-GAME JOYSTICK INDICATOR
+        # -------------------------------------------------------------
+        indicator_x = SCREEN_WIDTH - 210
+        indicator_y = 20
+
+        # Background badge
+        pygame.draw.rect(self.screen, (30, 41, 59), (indicator_x, indicator_y, 190, 36), border_radius=18)
+
+        if self.joystick:
+            pygame.draw.circle(self.screen, GREEN_ONLINE, (indicator_x + 20, indicator_y + 18), 7)
+            status_txt = self.small_font.render("JOYSTICK ONLINE", True, GREEN_ONLINE)
+        else:
+            pygame.draw.circle(self.screen, RED_OFFLINE, (indicator_x + 20, indicator_y + 18), 7)
+            status_txt = self.small_font.render("KEYBOARD MODE", True, RED_OFFLINE)
+
+        self.screen.blit(status_txt, (indicator_x + 35, indicator_y + 9))
 
         # Game Over Overlay
         if self.game_over:
@@ -248,7 +283,7 @@ class CargoStackerLauncher(ctk.CTk):
         super().__init__()
 
         self.title("Robotic Arm: Cargo Stacker")
-        self.geometry("550x550")
+        self.geometry("550x580")
         self.resizable(False, False)
 
         # Main Title
@@ -258,20 +293,35 @@ class CargoStackerLauncher(ctk.CTk):
             font=ctk.CTkFont(size=32, weight="bold"),
             text_color="#EDC22E"
         )
-        self.title_label.pack(pady=(30, 10))
+        self.title_label.pack(pady=(25, 5))
+
+        # -------------------------------------------------------------
+        # LAUNCHER JOYSTICK STATUS INDICATOR
+        # -------------------------------------------------------------
+        self.status_frame = ctk.CTkFrame(self, fg_color="#1E293B", corner_radius=20)
+        self.status_frame.pack(pady=8)
+
+        self.status_label = ctk.CTkLabel(
+            self.status_frame,
+            text="",
+            font=ctk.CTkFont(size=13, weight="bold"),
+            padx=15,
+            pady=4
+        )
+        self.status_label.pack()
 
         # Description
         self.desc_label = ctk.CTkLabel(
             self, 
             text="Mission: Build the highest tower possible!\nUse the robotic arm to grab boxes\nand stack them precisely on top of each other.",
-            font=ctk.CTkFont(size=15),
+            font=ctk.CTkFont(size=14),
             justify="center"
         )
         self.desc_label.pack(pady=10)
 
         # Controls Info Panel
         self.info_frame = ctk.CTkFrame(self, fg_color="#1E1E1E", corner_radius=10)
-        self.info_frame.pack(padx=40, pady=15, fill="x")
+        self.info_frame.pack(padx=40, pady=10, fill="x")
 
         instructions = (
             "🎮 Controls:\n"
@@ -311,6 +361,29 @@ class CargoStackerLauncher(ctk.CTk):
             command=self.return_to_gamecenter
         )
         self.exit_button.pack(pady=5, padx=50, fill="x")
+
+        # Start polling joystick status in launcher
+        self.update_joystick_status()
+
+    def update_joystick_status(self):
+        """Continuously polls joystick status in the GUI launcher window"""
+        pygame.joystick.init()
+        if pygame.joystick.get_count() > 0:
+            js = pygame.joystick.Joystick(0)
+            js.init()
+            name = js.get_name()
+            self.status_label.configure(
+                text=f"🟢 JOYSTICK CONNECTED: {name}",
+                text_color="#22c55e"
+            )
+        else:
+            self.status_label.configure(
+                text="🔴 NO JOYSTICK DETECTED (KEYBOARD FALLBACK)",
+                text_color="#ef4444"
+            )
+
+        # Poll state every 1000ms
+        self.after(1000, self.update_joystick_status)
 
     def start_game(self):
         self.withdraw()
